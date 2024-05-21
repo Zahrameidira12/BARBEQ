@@ -25,6 +25,7 @@ return new class extends Migration
             $table->foreignId('statusverifikasi_id')->nullable()->default(1);;
             $table->foreignId('rekening_id')->nullable();
             $table->foreignId('bayar_id')->nullable();
+            $table->foreignId('expedisi_id')->nullable();
             $table->timestamps();
         });
     }

@@ -12,6 +12,10 @@
                 <div class="col-md-8">{{ $pesanan->bayar->cara_bayar }}</div>
             </div>
             <div class="row mb-3">
+                <div class="col-md-4"><strong>Expedisi:</strong></div>
+                <div class="col-md-8">{{ $pesanan->expedisi->expedisi }}</div>
+            </div>
+            <div class="row mb-3">
                 <div class="col-md-4"><strong>Status:</strong></div>
                 <div class="col-md-8">{{ $pesanan->statusverifikasi->statusverifikasi }}</div>
             </div>

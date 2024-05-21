@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Models\Expedisi;
 use App\Models\Pesanan;
 use App\Models\Status;
 use App\Models\Statusverifikasi;
@@ -34,13 +34,14 @@ class PengirimanController extends Controller
             'pembelis' => Pembeli::all(),
             'statuss' => Status::all(),
             'statusverifikasis' => Statusverifikasi::all(),
-            'users' => User::all()
+            'users' => User::all(),
+            'expedisis' => Expedisi::all()
         ]);
     }
 
     public function show($id)
     {
-        $pesanan = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'user', 'bayar', 'status'])->findOrFail($id);
+        $pesanan = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'user', 'bayar', 'status', 'expedisi',])->findOrFail($id);
         return view('pengiriman.show', ['title' => 'Detail Pengiriman', 'pesanan' => $pesanan]);
     }
 
@@ -54,6 +55,7 @@ class PengirimanController extends Controller
             'status_id' => 'exists:statuss,id',
             'bayar_id' => 'required',
             'statusverifikasi_id' =>'exists:statusverifikasis,id',
+            'Expedisi_id' =>'required',
 
 
         ]);

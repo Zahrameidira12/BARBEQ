@@ -14,7 +14,7 @@
 
 
         <section class="section dashboard">
-           
+
             <div class="row">
 
                 <div class="col-lg-12">
@@ -91,7 +91,7 @@
 
                                 </td>
                                 <td>
-                                    <a href="{{ route('keuangan.show', $item->id) }}" class="btn btn-danger btn-sm" style="width: 30px; height: 30px;"><i class="bi bi-eye-fill"></i></a>
+                                    <a href="{{ route('pengiriman.show', $item->id) }}" class="btn btn-danger btn-sm" style="width: 30px; height: 30px;"><i class="bi bi-eye-fill"></i></a>
                                 </td>
 
 

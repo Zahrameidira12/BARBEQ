@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Bayar;
+use App\Models\Expedisi;
 use App\Models\Statusverifikasi;
 use App\Models\Rekening;
 use App\Models\User;
@@ -33,7 +34,7 @@ class KeuanganController extends Controller
         }
 
         // Mengambil relasi untuk diperlihatkan di view
-        $pesanans->load(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar', 'status', 'user']);
+        $pesanans->load(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar', 'status', 'user','expedisi']);
 
         // Mengembalikan view bersama data yang diperlukan
         return view('keuangan.index', [
@@ -46,6 +47,7 @@ class KeuanganController extends Controller
             'rekenings' => Rekening::all(),
             'bayars' => Bayar::all(),
             'statuss' => Status::all(),
+            'expedisis' => Expedisi::all(),
         ]);
     }
 
@@ -59,7 +61,7 @@ class KeuanganController extends Controller
             'user_id' => 'required',
             'status_id' => 'exists:statuss,id',
             'bayar_id' => 'exists:bayarss,id',
-            // 'bayar_id' => '',
+            'expedisi_id' => 'required',
             'statusverifikasi_id' =>'exists:statusverifikasis,id',
             'rekening_id' => 'required',
         ]);
@@ -140,7 +142,7 @@ class KeuanganController extends Controller
     public function show($id)
     {
         $pesanan = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'user', 'bayar', 'status','rekening'])->findOrFail($id);
-        return view('keuangan.show', ['title' => 'Detail ', 'pesanan' => $pesanan]);
+        return view('keuangan.show', ['title' => 'Detail Setoran/Pemasukan', 'pesanan' => $pesanan]);
     }
 
     public function fnGetData(Request $request)

@@ -123,11 +123,18 @@
             </li>
             @can('admin')
             <li class="nav-item">
+                <a class="nav-link text-dark {{ Request::is('expedisi*') ? 'active' : '' }}" href="/expedisi">
+                    <span data-feather="send" class="align-text-bottom"></span>
+                    Expedisi
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link text-dark {{ Request::is('banner*') ? 'active' : '' }}" href="/banner">
                     <span data-feather="image" class="align-text-bottom"></span>
                     Banner
                 </a>
             </li>
+
 
             @endcan
             @endcannot

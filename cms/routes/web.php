@@ -12,6 +12,7 @@ use App\Http\Controllers\BannerController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\BayarController;
 use App\Http\Controllers\CategoriController;
+use App\Http\Controllers\ExpedisiController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\ProfilController;
@@ -60,6 +61,7 @@ Route::post('/register', [RegisterController::class, 'store']);
 Route::resource('/pembeli', PembeliController::class)->except('show')->middleware('auth','admin')->except('show');
 Route::get('/pembeli/{id}', [PembeliController::class, 'show'])->name('pembeli.show');
 Route::resource('/pengiriman', PengirimanController::class)->except('show')->middleware('auth');
+Route::get('/pengiriman/{id}', [PengirimanController::class, 'show'])->name('pengiriman.show');
 
 
 
@@ -78,13 +80,13 @@ Route::get('/keuangan/{id}', [KeuanganController::class, 'show'])->name('keuanga
 
 
 Route::resource('/kategori', KategoriController::class)->except('show');
+Route::resource('/expedisi', ExpedisiController::class)->except('show');
 Route::resource('/bayar', BayarController::class)->except('show');
 Route::resource('/categori', CategoriController::class)->except('show');
 
 // Route::group(['middleware' => ['auth', 'superadmin']], function () {
 //     Route::get('/user', [UserController::class, 'manageUsers'])->name('user.manage');
 // });
-Route::get('/pengiriman/{id}', [PengirimanController::class, 'show'])->name('pengiriman.show');
 Route::put('/pengiriman/{id}/update-status', [PengirimanController::class, 'updateStatus'])->name('pengiriman.updateStatus');
 Route::put('/pesanan/{id}/update-statusverifikasi', [PesananController::class, 'updateStatusverifikasi'])->name('pesanan.updateStatusverifikasi');
 Route::get('/pesanan/{id}', [PesananController::class, 'show'])->name('pesanan.show');

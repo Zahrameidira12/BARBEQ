@@ -11,7 +11,7 @@ class RekeningController extends Controller
     {
         $rekenings = Rekening::where('user_id', auth()->id())->get();
         return view('rekening.index', [
-            'title' => 'Daftar Rekening Anda',
+            'title' => 'Daftar Rekening ',
             'rekenings' => $rekenings,
             'users' => User::all(),
         ]);

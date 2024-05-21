@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bayar;
+use App\Models\Expedisi;
 use App\Models\Pesanan;
 use App\Models\Statusverifikasi;
 use App\Models\Rekening;
@@ -38,7 +39,7 @@ class PesananController extends Controller
                     });
         }
 
-        $pesanans = $query->with(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar'])->get();
+        $pesanans = $query->with(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar','expedisi'])->get();
 
         return view('pesanan.index', [
             'title' => 'Pesanan',
@@ -49,6 +50,7 @@ class PesananController extends Controller
             'produks' => Produk::all(),
             'rekenings' => Rekening::all(),
             'bayars' => Bayar::all(),
+            'expedisis' => Expedisi::all(),
 
         ]);
     }
@@ -70,6 +72,7 @@ class PesananController extends Controller
             'bayar_id' => 'required',
             'statusverifikasi_id' =>'exists:statusverifikasis,id',
             'rekening_id' => 'required',
+            'expedisi_id' => 'required',
 
         ]);
 
@@ -140,7 +143,7 @@ class PesananController extends Controller
 
     public function show($id)
     {
-        $pesanan = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'user', 'bayar'])->findOrFail($id);
+        $pesanan = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'user', 'bayar','expedisi'])->findOrFail($id);
         return view('pesanan.show', ['title' => 'Detail Pesanan', 'pesanan' => $pesanan]);
     }
 

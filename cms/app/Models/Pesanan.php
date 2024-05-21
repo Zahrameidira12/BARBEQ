@@ -22,9 +22,14 @@ class Pesanan extends Model
         'rekening_id',
         'bayar_id',
         'keuangan_id',
+        'expedisi_id',
 
     ];
 
+    public function expedisi()
+    {
+        return $this->belongsTo(Expedisi::class);
+    }
     public function statusverifikasi()
     {
         return $this->belongsTo(Statusverifikasi::class);

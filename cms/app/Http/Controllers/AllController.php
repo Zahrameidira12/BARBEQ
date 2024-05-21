@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bayar;
+use App\Models\Expedisi;
 use App\Models\Statusverifikasi;
 use App\Models\Rekening;
 use App\Models\User;
@@ -17,7 +18,7 @@ class AllController extends Controller
 {
     public function index()
     {
-        $pesanans = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar','status','user'])->get();
+        $pesanans = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar','status','user','expedisi'])->get();
         // $statusverifikasis = Statusverifikasi::all(); // Assuming you have a model named Statusverifikasi
         // $statuss = Status::all(); // Assuming you have a model named Statusverifikasi
 
@@ -30,7 +31,8 @@ class AllController extends Controller
             'produks' => Produk::all(),
             'rekenings' => Rekening::all(),
             'bayars' => Bayar::all(),
-            'statuss' => Status::all()
+            'statuss' => Status::all(),
+            'expedisi' => Expedisi::all()
         ]);
     }
 
@@ -49,7 +51,8 @@ class AllController extends Controller
             'bayar_id' => 'required',
             // 'bayar_id' => '',
             'statusverifikasi_id' =>'exists:statusverifikasis,id',
-            'rekening_id' => 'required'
+            'rekening_id' => 'required',
+            'expedisi_id' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -77,6 +80,7 @@ class AllController extends Controller
             'status_id' => '',
             'bayar_id' => '',
             'statusverifikasi_id' => '',
+            'expedisi_id' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -142,7 +146,7 @@ class AllController extends Controller
 
     public function show($id)
     {
-        $pesanan = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'user', 'bayar', 'status'])->findOrFail($id);
+        $pesanan = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'user', 'bayar', 'status', 'expedisi',])->findOrFail($id);
         return view('all.show', ['title' => 'Detail Pesanan', 'pesanan' => $pesanan]);
     }
 
