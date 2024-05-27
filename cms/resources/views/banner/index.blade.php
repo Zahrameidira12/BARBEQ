@@ -48,7 +48,7 @@
                         </td>
                         <td style="word-wrap: break-word; white-space: normal; max-width: 400px; overflow-wrap: break-word;">{{ $item->detail }}</td>
                         <td>
-                            {{-- <a href="{{ route('banner.edit', $item->id) }}" class="btn btn-danger btn-sm">Edit</a> --}}
+                            <a href="{{ route('banner.edit', $item->id) }}" class="btn btn-danger btn-sm">Edit</a>
                            <form action="/banner/{{ $item->id }}" method="post" class="d-inline">
                                 <!-- Timpa method post menjadi delete -->
                                 @method('delete')

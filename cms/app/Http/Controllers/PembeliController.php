@@ -19,7 +19,7 @@ class PembeliController extends Controller
     {
         $param = $request->except('_token', 'gambar');
         $validator = Validator::make($param, [
-            'nama_pembeli' => 'required|min:2|max:100',
+            'name' => 'required|min:2|max:100',
             'email' => 'required|email:dns|unique:pembelis',
             'password' => 'required|min:6|max:200',
             'no_tlp' => 'required|min:6|max:15',
@@ -63,7 +63,7 @@ class PembeliController extends Controller
     {
         $param = $request->except('_method', '_token', 'gambar', 'oldImage');
         $validator = Validator::make($param, [
-            'nama_pembeli' => 'required|min:2|max:100',
+            'name' => 'required|min:2|max:100',
             'email' => 'required|email:dns|unique:pembelis,email,' . $id,
             'password' => 'required|min:6|max:200',
             'no_tlp' => 'required|min:6|max:15',
@@ -111,7 +111,7 @@ class PembeliController extends Controller
 
         if ($request->input('search')['value'] != null && $request->input('search')['value'] != '') {
             $data = $data->where('id', 'LIKE', '%' . $request->keyword . '%')
-                ->orWhere('nama_pembeli', 'LIKE', '%' . $request->keyword . '%')
+                ->orWhere('name', 'LIKE', '%' . $request->keyword . '%')
                 ->orWhere('email', 'LIKE', '%' . $request->keyword . '%');
         }
 

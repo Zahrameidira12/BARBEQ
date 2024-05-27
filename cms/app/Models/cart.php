@@ -15,6 +15,9 @@ class cart extends Model
         'nama_produk',
         'harga',
         'gambar',
+        'user_id',
+        'penjual_id',
+        'produk_id',
 
 
     ];

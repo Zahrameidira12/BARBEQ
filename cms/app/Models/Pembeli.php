@@ -15,7 +15,7 @@ class Pembeli extends Authenticatable implements JWTSubject
     use HasApiTokens, HasFactory, Notifiable;
     protected $guarded = ['id'];
     protected $fillable = [
-        'nama_pembeli',
+        'name',
         'email',
         'password',
         'no_tlp',

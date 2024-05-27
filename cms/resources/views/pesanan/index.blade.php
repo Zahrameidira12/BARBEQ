@@ -52,23 +52,23 @@
                             @cannot('admin')
                             <td>{{ $item->produk ? $item->produk->nama_produk : 'Produk tidak tersedia' }}</td>
                             @endcannot
-                            <td>{{ $item->pembeli ? $item->pembeli->nama_pembeli : 'Pembeli tidak tersedia' }}</td>
+                            <td>{{ $item->pembeli ? $item->pembeli->name : 'Pembeli tidak tersedia' }}</td>
                             {{-- <td>{{ $item->pembeli ? $item->pembeli->alamat_pembeli : 'Alamat tidak tersedia' }}</td> --}}
-                            <td>{{ $item->pesanan ? $item->pesanan->harga_total : 'harga tidak ada' }}</td>
+                            <td>{{ $item->harga ?? 'harga tidak ada' }}</td>
                             {{-- <td>{{ $item->pesanan ? $item->pesanan->jumlah_produk : 'jumlah tidak ada' }}</td> --}}
                             <td>{{ $item->bayar ? $item->bayar->cara_bayar : 'bayar tidak tersedia' }}</td>
+
                             <td>
                                 @if ($item->bayar_id == 1)
                                     <span>Tidak perlu bukti</span>
-                                @elseif ($item->bayar_id == 2 && (!$item->bayar || !$item->bayar->gambar))
-                                    <span>sudah d bayar</span>
+                                @elseif (!$item->gambar)
+                                    <span>Pembeli belum bayar</span>
                                 @else
-                                    {{-- @if ($item->bayar && $item->bayar->gambar) --}}
-                                        <img src="{{ url('/bayar-images/' . $item->bayar->gambar) }}" alt="Bukti Pembayaran"
-                                            style="max-height: 100px" class="img-fluid mt-2 d-block">
-                                    {{-- @endif --}}
+                                    <img src="{{ asset($item->gambar) }}" alt="Bukti Pembayaran" style="max-height: 100px" class="img-fluid mt-2 d-block">
                                 @endif
                             </td>
+
+
 
 
                             @can('admin')
@@ -95,7 +95,7 @@
                                     @method('delete')
                                     @csrf
                                     <button type="submit"
-                                        onclick="return confirm('Apakah anda yakin ingin batalkan pesanan ? {{ $item->pembeli->nama_pembeli }}')"
+                                        onclick="return confirm('Apakah anda yakin ingin batalkan pesanan ? {{ $item->pembeli->name }}')"
                                         class="badge bg-danger border-0" style="width: 30px; height: 30px;">
                                         <i class="fas fa-times"></i>
                                     </button>

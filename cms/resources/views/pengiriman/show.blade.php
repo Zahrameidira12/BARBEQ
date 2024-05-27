@@ -7,6 +7,23 @@
                 <div class="col-md-4"><strong>ID Pesanan:</strong></div>
                 <div class="col-md-8">{{ $pesanan->id }}</div>
             </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 mt-4">
+                    <strong>
+                        Resi
+                    </strong>
+                </div>
+                <div class="col-md-4 mt-4">
+                    @if ($pesanan->gambar3)
+                        <img src="{{ asset($pesanan->gambar3) }}" alt="" width="200" height="150"
+                            alt="User Image" style="float: left; margin-center: 10px;">
+                    @else
+                        Penjual belum ada resi pengiriman
+                    @endif
+                </div>
+            </div>
+
             <div class="row mb-3">
                 <div class="col-md-4"><strong>Expedisi:</strong></div>
                 <div class="col-md-8">{{ $pesanan->expedisi->expedisi }}</div>
@@ -26,7 +43,7 @@
             </div>
             <div class="row mb-3">
                 <div class="col-md-4"><strong>Pembeli:</strong></div>
-                <div class="col-md-8">{{ $pesanan->pembeli->nama_pembeli }}</div>
+                <div class="col-md-8">{{ $pesanan->pembeli->name }}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-4"><strong>No tlp Pembeli:</strong></div>
@@ -34,7 +51,7 @@
             </div>
             <div class="row mb-3">
                 <div class="col-md-4"><strong>Alamat Pembeli:</strong></div>
-                <div class="col-md-8">{{ $pesanan->pembeli->alamat_pembeli }}</div>
+                <div class="col-md-8">{{ $pesanan->alamat }}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-4"><strong>Nama Produk:</strong></div>
@@ -46,7 +63,7 @@
             </div>
             <div class="row mb-3">
                 <div class="col-md-4"><strong>Harga:</strong></div>
-                <div class="col-md-8">{{ $pesanan->harga_total }}</div>
+                <div class="col-md-8">{{ $pesanan->harga }}</div>
             </div>
             {{-- <div class="row mb-3">
                 <div class="col-md-4"><strong>Cara Bayar:</strong></div>

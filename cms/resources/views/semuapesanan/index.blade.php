@@ -42,8 +42,8 @@
                             <th scope="row">{{ $loop->iteration }}</th>
                             <td>{{ $item->produk ? $item->produk->nama_produk : 'Produk tidak tersedia' }}</td>
                             <td>{{ $item->user ? $item->user->name : 'Pembeli tidak tersedia' }}</td>
-                            <td>{{ $item->pembeli ? $item->pembeli->nama_pembeli : 'Pembeli tidak tersedia' }}</td>
-                            <td>{{ $item->pembeli ? $item->pembeli->alamat_pembeli : 'Alamat tidak tersedia' }}</td>
+                            <td>{{ $item->pembeli ? $item->pembeli->name : 'Pembeli tidak tersedia' }}</td>
+                            <td>{{ $item->pembeli ? $item->alamat : 'Alamat tidak tersedia' }}</td>
                             <td>{{ $item->produk ? $item->produk->harga : 'Harga tidak tersedia' }}</td>
                             <td>{{ $item->bayar ? $item->bayar->cara_bayar : 'Bayar tidak tersedia' }}</td>
                             <td>
@@ -92,7 +92,7 @@
                                 <form action="{{ route('all.destroy', $item->id) }}" method="post" class="d-inline">
                                     @method('delete')
                                     @csrf
-                                    <button type="submit" onclick="return confirm('Apakah anda yakin ingin batalkan pesanan ? {{ $item->pembeli->nama_pembeli }}')" class="badge bg-danger border-0">
+                                    <button type="submit" onclick="return confirm('Apakah anda yakin ingin batalkan pesanan ? {{ $item->pembeli->name }}')" class="badge bg-danger border-0">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </form>

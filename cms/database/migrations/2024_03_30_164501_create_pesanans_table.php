@@ -16,8 +16,11 @@ return new class extends Migration
         Schema::create('pesanans', function (Blueprint $table) {
             $table->id();
             $table->string('gambar')->nullable();
-            $table->integer('harga_total');
+            $table->string('gambar2')->nullable();
+            $table->string('gambar3')->nullable();
+            $table->integer('harga');
             $table->integer('jumlah_produk');
+            $table->string('alamat');
             $table->foreignId('produk_id');
             $table->foreignId('pembeli_id');
             $table->foreignId('user_id');

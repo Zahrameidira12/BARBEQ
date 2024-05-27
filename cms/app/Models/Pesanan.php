@@ -11,7 +11,10 @@ class Pesanan extends Model
     protected $guarded = ['id'];
     protected $fillable = [
         'gambar',
-        'harga_total',
+        'gambar2',
+        'gambar3',
+        'harga',
+        'alamat',
         'jumlah_produk',
         'pembeli_id',
         'produk_id',

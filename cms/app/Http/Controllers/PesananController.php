@@ -62,9 +62,10 @@ class PesananController extends Controller
 
         // Validasi
         $validator = Validator::make($param, [
-            'gambar' => 'image|file|max:1024',
-            'harga_total' => 'required',
+            'gambar' => 'nullable|image|file|max:1024',
+            'harga' => 'required',
             'jumlah_produk' => 'required',
+            'alamat' => 'required',
             'produk_id' => 'required',
             'pembeli_id' => 'required',
             'user_id' => 'required',
@@ -81,6 +82,13 @@ class PesananController extends Controller
         }
 
         $pesanans = Pesanan::create($param);
+
+        if ($request->hasFile('gambar')) {
+            $file = $request->file('gambar');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('bayar-images'), $filename);
+            $param['gambar'] = 'bayar-images/' . $filename;
+        }
 
         if ($pesanans) {
             return redirect('pesanan')->with('success', 'Pesanan Created');

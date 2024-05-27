@@ -3,7 +3,7 @@
 <div class="container mt-4">
     <div class="card" style="max-width: 800px; margin: auto;">
         <div class="card-header">
-            <h3>Detail Pembeli: {{ $pembeli->nama_pembeli }}</h3>
+            <h3>Detail Pembeli: {{ $pembeli->name }}</h3>
         </div>
         <div class="card-body">
             <div class="row mb-3 mt-3">
@@ -21,7 +21,7 @@
             </div>
             <div class="row mb-3">
                 <div class="col-md-4"><strong>Nama Pembeli:</strong></div>
-                <div class="col-md-8">{{ $pembeli->nama_pembeli }}</div>
+                <div class="col-md-8">{{ $pembeli->name }}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-4"><strong>Email:</strong></div>

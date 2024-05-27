@@ -12,9 +12,14 @@ class wishlist extends Model
     protected $table = "wishlists";
     protected $fillable = [
 
-        'pembeli_id',
-        'kategori_id',
-        'produk_id',
+        'nama_product',
+        'harga',
+        'gambar',
+        'id_wish',
+        'user_id',
+        'penjual_id'
+
+
 
     ];
     public function kategori()
@@ -25,10 +30,10 @@ class wishlist extends Model
     }
     public function produk()
     {
-        return $this->belongsTo(Produk::class);
+        return $this->belongsTo(Produk::class,'id_wish');
     }
     public function pembeli()
     {
-        return $this->belongsTo(Pembeli::class);
+        return $this->belongsTo(Pembeli::class,'user_id');
     }
 }

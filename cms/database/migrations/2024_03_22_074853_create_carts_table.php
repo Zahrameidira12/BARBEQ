@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->default('id');
-            $table->foreignId('pejual_id')->default('id');
+            $table->foreignId('penjual_id')->default('id');
             $table->foreignId('produk_id')->default('id');
             $table->string('nama_produk');
             $table->integer('harga');

@@ -3,8 +3,26 @@
     <div class="container mt-4">
         <div class="card" style="max-width: 800px; margin: auto;">
             <div class="card-body">
+
                 <div class="row mb-3">
                     <div class="col-md-4 mt-4">
+                        <strong>
+                            Bukti Pembayaran
+                        </strong>
+                    </div>
+                    <div class="col-md-4 mt-4">
+                        @if ($pesanan->gambar)
+                            <img src="{{ asset($pesanan->gambar) }}" alt="" width="200" height="150"
+                                alt="User Image" style="float: left; margin-center: 10px;">
+                        @else
+                            pembeli belum bayar
+                        @endif
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4 mt-4">
+
                         <strong>
                             @if (auth()->user()->isadmin)
                                 Bukti Setor
@@ -14,14 +32,16 @@
                         </strong>
                     </div>
                     <div class="col-md-4 mt-4">
-                        @if ($pesanan->gambar)
-                            <img src="{{ asset($pesanan->gambar) }}" alt="Bukti setor" width="200" height="150"
+                        @if ($pesanan->gambar2)
+                            <img src="{{ asset($pesanan->gambar2) }}" alt="" width="200" height="150"
                                 alt="User Image" style="float: left; margin-center: 10px;">
                         @else
                             tidak ada setor
                         @endif
                     </div>
+
                 </div>
+
 
                 @can('admin')
                     <div class="row mb-3">
@@ -33,14 +53,14 @@
                             @csrf
                             @method('put') <!-- Tambahkan ini untuk menentukan method PUT -->
                             <div class="mb-3">
-                                <label for="gambar" class="form-label">Gambar</label>
+                                {{-- <label for="gambar2" class="form-label">gambar2</label> --}}
                                 <img src="" id="img-preview" class="img-preview img-fluid w-30" alt="">
                                 <input type="file" onchange="previewImage()"
-                                    class="form-control @error('gambar') is-invalid @enderror" accept="setor-images/*"
-                                    name="gambar" id="gambar" placeholder="" aria-describedby="fileHelpId">
+                                    class="form-control @error('gambar2') is-invalid @enderror" accept="setor-images/*"
+                                    name="gambar2" id="gambar2" placeholder="" aria-describedby="fileHelpId">
                                 <div id="fileHelpId" class="form-text text-danger">Format jpg, jpeg, png</div>
                                 <div class="invalid-feedback">
-                                    {{ $errors->has('gambar') ? $errors->first('gambar') : '' }}
+                                    {{ $errors->has('gambar2') ? $errors->first('gambar2') : '' }}
                                 </div>
                             </div>
 
@@ -68,10 +88,20 @@
                     <div class="col-md-4"><strong>Cara Bayar:</strong></div>
                     <div class="col-md-8">{{ $pesanan->bayar->cara_bayar }}</div>
                 </div>
+                @if ($pesanan && $pesanan->bayar_id != 0 && $pesanan->bayar_id != 1 && $pesanan->statusverifikasi)
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Status:</strong></div>
                     <div class="col-md-8">{{ $pesanan->statusverifikasi->statusverifikasi }}</div>
                 </div>
+                @else
+                {{-- <div class="row mb-3">
+                    <div class="col-md-4"><strong>Status:</strong></div>
+                    <div class="col-md-8">cod, tidak ada verifikasi</div>
+                </div> --}}
+
+                @endif
+
+
 
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Expedisi:</strong></div>
@@ -92,7 +122,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Pembeli:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->pembeli->nama_pembeli }}</div>
+                    <div class="col-md-8">{{ $pesanan->pembeli->name }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>No tlp Pembeli:</strong></div>
@@ -100,7 +130,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Alamat Pembeli:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->pembeli->alamat_pembeli }}</div>
+                    <div class="col-md-8">{{ $pesanan->alamat }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Nama Produk:</strong></div>
@@ -112,7 +142,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Harga:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->harga_total }}</div>
+                    <div class="col-md-8">{{ $pesanan->harga }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>ID Produk:</strong></div>
@@ -138,15 +168,15 @@
 
 
     <script>
-        // Fungsi preview gambar
+        // Fungsi preview gambar2
         function previewImage() {
             const imgPreview = document.querySelector('#img-preview');
-            const gambarInput = document.querySelector('#gambar');
+            const gambar2Input = document.querySelector('#gambar2');
 
-            const fileGambar = new FileReader();
-            fileGambar.readAsDataURL(gambarInput.files[0]);
+            const filegambar2 = new FileReader();
+            filegambar2.readAsDataURL(gambar2Input.files[0]);
 
-            fileGambar.onload = function(e) {
+            filegambar2.onload = function(e) {
                 imgPreview.src = e.target.result;
             }
         }

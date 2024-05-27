@@ -20,7 +20,7 @@ class PengirimanController extends Controller
 
         $pengirimans = Pesanan::where('user_id', $user->id)
             ->where(function ($query) {
-                $query->where('bayar_id', 1)->where('statusverifikasi_id', [0, 1])
+                $query->where('bayar_id', 1)->whereIn('statusverifikasi_id', [0, 1])
                     ->orWhere(function ($query) {
                         $query->where('bayar_id', 2)->where('statusverifikasi_id', 2);
                     });
@@ -30,59 +30,43 @@ class PengirimanController extends Controller
         return view('pengiriman.index', [
             'title' => 'Pengiriman',
             'pengirimans' => $pengirimans,
-            'pesanans' => Pesanan::all(),
-            'pembelis' => Pembeli::all(),
             'statuss' => Status::all(),
-            'statusverifikasis' => Statusverifikasi::all(),
-            'users' => User::all(),
-            'expedisis' => Expedisi::all()
         ]);
     }
 
     public function show($id)
     {
-        $pesanan = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'user', 'bayar', 'status', 'expedisi',])->findOrFail($id);
+        $pesanan = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'user', 'bayar', 'status', 'expedisi'])->findOrFail($id);
         return view('pengiriman.show', ['title' => 'Detail Pengiriman', 'pesanan' => $pesanan]);
     }
 
-    function store(Request $request)
+    public function update(Request $request, $id)
     {
-        $param = $request->except('_token', 'gambar');
-        $validator = Validator::make($param, [
-            'harga_total' => 'required',
-            'jumlah_produk' => 'required',
-            'pembeli_id' => 'required',
-            'status_id' => 'exists:statuss,id',
-            'bayar_id' => 'required',
-            'statusverifikasi_id' =>'exists:statusverifikasis,id',
-            'Expedisi_id' =>'required',
-
-
+        $validator = Validator::make($request->all(), [
+            'gambar3' => 'nullable|image|file|max:1024',
         ]);
+
         if ($validator->fails()) {
-
-            $errors = $validator->errors()->messages();
-            $messages = [];
-            foreach ($errors as $key => $value) {
-                $messages = $value[0];
-            }
-            return back()->with('error', $messages);
-        }
-        // dd($param);
-        $param['gambar'] = '';
-        if ($request->file('gambar')) {
-            $file = $request->file('gambar');
-            $filename = time() . '.' . $request->gambar->extension();
-            $file->move(public_path('store/post-images'), $filename);
-            $param['gambar'] = url('store/post-images') . '/' . $filename;
+            return back()->withErrors($validator)->withInput();
         }
 
-        $create = Pesanan::create($param);
+        $pesanan = Pesanan::findOrFail($id);
+        $param = $request->except('_method', '_token', 'gambar', 'gambar3', 'oldImage', 'oldImage2');
 
-        if ($create) {
-            return redirect('pengiriman')->with('success', 'pengiriman Created');
+        if ($request->hasFile('gambar3')) {
+            $file3 = $request->file('gambar3');
+            $filename3 = time() . '.' . $file3->getClientOriginalExtension();
+            $file3->move(public_path('resi-images'), $filename3);
+            $param['gambar3'] = 'resi-images/' . $filename3;
         }
-        return back()->with('error', 'Oops, something went wrong!');
+
+        $update = $pesanan->update($param);
+
+        if ($update) {
+            return redirect()->route('pengiriman.index')->with('success', 'Setor Updated');
+        }
+
+        return back()->with('error', 'Not Updated');
     }
 
     public function updateStatus(Request $request, $id)
@@ -104,7 +88,7 @@ class PengirimanController extends Controller
         $page = ($request->start / $request->length) + 1;
         $request->merge(['page' => $page]);
 
-        $data  = new Pesanan();
+        $data = new Pesanan();
         $data = $data->where('id', '!=', 1)->with('id');
         if ($request->input('search')['value'] != null && $request->input('search')['value'] != '') {
             $data = $data->where('id', 'LIKE', '%' . $request->keyword . '%')->orWhere('nama_produk', 'LIKE', '%' . $request->keyword . '%')
@@ -113,7 +97,7 @@ class PengirimanController extends Controller
                 });
         }
 
-        //Setting Limit
+        // Setting Limit
         $limit = 10;
         if (!empty($request->input('length'))) {
             $limit = $request->input('length');
@@ -121,9 +105,8 @@ class PengirimanController extends Controller
 
         $data = $data->orderBy($request->columns[$request->order[0]['column']]['id'], $request->order[0]['dir'])->paginate($limit);
 
-
         $data = json_encode($data);
-        $data = json_Decode($data);
+        $data = json_decode($data);
 
         return DataTables::of($data->data)
             ->skipPaging()

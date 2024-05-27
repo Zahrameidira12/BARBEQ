@@ -30,7 +30,7 @@
                 <div class="col-md-8">{{ $user->no_tlp }}</div>
             </div>
             <div class="row mb-3">
-                <div class="col-md-4"><strong>Alamat Penjual:</strong></div>
+                <div class="col-md-4"><strong>Alamat Pembeli:</strong></div>
                 <div class="col-md-8">{{ $user->alamat }}</div>
             </div>
         </div>

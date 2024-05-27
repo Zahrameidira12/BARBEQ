@@ -33,7 +33,7 @@
                         {{-- <th scope="col">jumlah produk</th> --}}
                         <th scope="col">Cara Bayar</th>
                         {{-- <th scope="col">Bukti Transfer</th> --}}
-                        <th scope="col">Status Verifikasi</th>
+                        {{-- <th scope="col">Status Verifikasi</th> --}}
                         <th scope="col">Status</th>
                         <th scope="col">Action</th>
 
@@ -46,22 +46,23 @@
                             <td scope="row">{{ $loop->iteration }}</td>
                             {{-- <td>{{ $item->kode }}</td> --}}
                             <td>{{ $item->produk ? $item->produk->nama_produk : 'Produk tidak tersedia' }}</td>
-                            <td>{{ $item->pembeli ? $item->pembeli->nama_pembeli : 'Pembeli tidak tersedia' }}</td>
+                            <td>{{ $item->pembeli ? $item->pembeli->name : 'Pembeli tidak tersedia' }}</td>
                             {{-- <td>{{ $item->pembeli ? $item->pembeli->alamat_pembeli : 'Alamat tidak tersedia' }}</td> --}}
-                            <td>{{ $item->pesanan ? $item->pesanan->harga_total : 'harga tidak ada' }}</td>
+                            <td>{{ $item->harga ? $item->harga : 'harga tidak ada' }}</td>
+
                             {{-- <td>{{ $item->pesanan ? $item->pesanan->jumlah_produk : 'jumlah tidak ada' }}</td> --}}
                             <td>{{ $item->bayar ? $item->bayar->cara_bayar : 'bayar tidak tersedia' }}</td>
 
-                            <td>{{ $item->statusverifikasi ? $item->statusverifikasi->statusverifikasi : '' }}</td>
+                            {{-- <td>{{ $item->statusverifikasi ? $item->statusverifikasi->statusverifikasi : '' }}</td> --}}
                             <td>{{ $item->status ? $item->status->status : '' }}</td>
 
                             <td>
                                 <a href="{{ route('all.show', $item->id) }}" class="btn btn-danger btn-sm" style="width: 30px; height: 30px;"><i class="bi bi-eye-fill"></i></a>
-                                <form action="/pesanan/{{ $item->id }}" method="post" class="d-inline">
+                                <form action="/all/{{ $item->id }}" method="post" class="d-inline">
                                     @method('delete')
                                     @csrf
                                     <button type="submit"
-                                        onclick="return confirm('Apakah anda yakin ingin batalkan pesanan ? {{ $item->pembeli->nama_pembeli }}')"
+                                        onclick="return confirm('Apakah anda yakin ingin batalkan pesanan ? {{ $item->pembeli->name }}')"
                                         class="badge bg-danger border-0" style="width: 30px; height: 30px;">
                                         <i class="fas fa-times"></i>
                                     </button>

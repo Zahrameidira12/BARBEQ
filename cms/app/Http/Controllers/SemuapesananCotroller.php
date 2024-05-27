@@ -26,6 +26,9 @@ class SemuapesananController extends Controller
         // Validasi
         $validator = Validator::make($param, [
             'produk_id' => 'required',
+            'harga' => 'required',
+            'jumlah_produk' => 'required',
+            'alamat' => 'required',
             'pembeli_id' => 'required',
             'user_id' => 'required',
              'status_id' => 'exists:statuss,id',

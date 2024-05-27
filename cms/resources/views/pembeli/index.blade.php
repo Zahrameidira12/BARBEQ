@@ -24,10 +24,8 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        {{-- <th scope="col">Kode</th> --}}
                         <th scope="col">Nama Pembeli</th>
                         <th scope="col">No Tlp</th>
-                        {{-- <th scope="col">Alamat</th> --}}
                         <th scope="col">Gambar</th>
                         <th scope="col">Action</th>
                     </tr>
@@ -37,17 +35,15 @@
                     @foreach($pembelis as $item)
                         <tr class="">
                             <td scope="row">{{ $loop->iteration }}</td>
-                            {{-- <td>{{ $item->kode }}</td> --}}
-                            <td>{{ $item->nama_pembeli }}</td>
+                            <td>{{ $item->name }}</td>
                             <td>{{ $item->no_tlp }}</td>
-                            {{-- <td>{{ $item->alamat_pembeli}}</td> --}}
                             <td>
                                 @if ($item->gambar)
                                 <img src="{{ $item->gambar }}" style="max-height: 150px" class="img-fluid mt-2 d-block"
-                                alt="{{ $item->nama_pembeli }}">
+                                alt="{{ $item->name }}">
                             @else
-                                <img src="https://source.unsplash.com/1200x400? {{ $item->nama_pembeli }}" class="img-fluid mt-2"
-                                alt="{{ $item->nama_pembeli}}">
+                                <img src="https://source.unsplash.com/1200x400? {{ $item->name }}" class="img-fluid mt-2"
+                                alt="{{ $item->name}}">
                                 @endif
                             </td>
                             @can('admin')
@@ -57,7 +53,7 @@
                                     <!-- Timpa method post menjadi delete -->
                                     @method('delete')
                                     @csrf
-                                    <button type="submit" onclick="return confirm('Apakah anda yakin ingin hapus pembeli ? {{ $item->nama_pembeli }}')" class="badge bg-danger border-0" style="width: 30px; height: 30px;">
+                                    <button type="submit" onclick="return confirm('Apakah anda yakin ingin hapus pembeli ? {{ $item->name }}')" class="badge bg-danger border-0" style="width: 30px; height: 30px;">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </form>

@@ -20,7 +20,10 @@
             <link rel="stylesheet" type="text/css"
                 href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" />
 
-            <!-- Table -->
+            @can('admin')
+                <h6 style="color: red;">setor bisa dilakukan jika resi dan bukti pembayaran ada!!</h6>
+            @endcan
+
             <table id="pesanan" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
@@ -28,6 +31,7 @@
                         @can('admin')
                             <th scope="col">Penjual</th>
                         @endcan
+                        {{-- <th scope="col">Status </th> --}}
                         @cannot('admin')
                             <th scope="col">Nama Produk</th>
                             <th scope="col">Harga total</th>
@@ -47,7 +51,7 @@
                             <th scope="col">rek penjual</th>
                         @endcan
                         {{-- @can('admin') --}}
-                            <th scope="col">Action</th>
+                        <th scope="col">Action</th>
                         {{-- @endcan --}}
                         {{-- <th scope="col">#</th> --}}
                     </tr>
@@ -59,19 +63,20 @@
                             <td>{{ $loop->iteration }}</td>
                             @can('admin')
                                 <td>{{ $item->user ? $item->user->name : 'Penjual tidak tersedia' }}</td>
+                                {{-- <td>{{ $item->status ? $item->status->status : 'status tidak tersedia' }} --}}
                             @endcan
                             @cannot('admin')
                                 <td>{{ $item->produk ? $item->produk->nama_produk : 'Produk tidak tersedia' }}</td>
-                                <td>{{ $item->pesanan ? $item->pesanan->harga_total : 'harga tidak ada' }}</td>
-                                <td>{{ $item->pesanan ? $item->pesanan->jumlah_produk : 'jumlah tidak ada' }}</td>
+                                <td>{{ $item->harga ?? 'harga tidak ada' }}</td>
+                                <td>{{ $item->jumlah_produk ?? 'jumlah tidak ada' }}</td>
                                 <td>{{ $item->statusverifikasi ? $item->statusverifikasi->statusverifikasi : 'Verifikasi tidak tersedia' }}
                                 </td>
                             @endcannot
                             <td>{{ $item->bayar ? $item->bayar->cara_bayar : ' tidak tersedia' }}</td>
 
                             <td>
-                                @if ($item->gambar)
-                                    <img src="{{ asset($item->gambar) }}" alt="Bukti setor" style="max-height: 100px"
+                                @if ($item->gambar2)
+                                    <img src="{{ asset($item->gambar2) }}" alt="Bukti setor" style="max-height: 70px"
                                         class="img-fluid mt-2 d-block">
                                 @else
                                     tidak ada setor
@@ -82,25 +87,25 @@
                                 <td>{{ $item->rekening ? $item->rekening->no_rek : 'Rekening tidak tersedia' }}</td>
                             @endcan
 
-                                <td style="display: flex; align-items: center;">
-                                    <a href="{{ route('keuangan.show', $item->id) }}" class="btn btn-danger btn-sm"
-                                        style="width: 30px; height: 30px;"><i class="bi bi-wallet"></i></a>
-                                    {{-- <a href="{{ route('keuangan.edit', $item->id) }}" class="btn btn-danger btn-sm" style="width: 30px; height: 30px;"><i class="bi bi-cash-coin"></i></a> --}}
-                                    @can('admin')
+                            <td style="display: flex; align-items: center;">
+                                <a href="{{ route('keuangan.show', $item->id) }}" class="btn btn-danger btn-sm"
+                                    style="width: 30px; height: 30px;"><i class="bi bi-wallet"></i></a>
+                                {{-- <a href="{{ route('keuangan.edit', $item->id) }}" class="btn btn-danger btn-sm" style="width: 30px; height: 30px;"><i class="bi bi-cash-coin"></i></a> --}}
+                                @can('admin')
                                     <form action="{{ route('keuangan.destroy', $item->id) }}" method="post" class="d-inline">
                                         @method('delete')
                                         @csrf
                                         <button type="submit"
-                                            onclick="return confirm('Apakah anda yakin ingin batalkan pesanan ? {{ $item->pembeli->nama_pembeli }}')"
+                                            onclick="return confirm('Apakah anda yakin ingin batalkan pesanan ? {{ $item->pembeli->name }}')"
                                             class="badge bg-danger border-0" style="width: 30px; height: 30px;">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </form>
-                                    @endcan
+                                @endcan
 
 
 
-                                </td>
+                            </td>
 
 
                         </tr>

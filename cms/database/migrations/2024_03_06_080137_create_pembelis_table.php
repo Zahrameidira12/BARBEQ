@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pembelis', function (Blueprint $table) {
             $table->id();
             // $table->string('kode')->unique();
-            $table->string('nama_pembeli');
+            $table->string('name');
             $table->string('email');
             $table->string('password');
             $table->string('no_tlp');

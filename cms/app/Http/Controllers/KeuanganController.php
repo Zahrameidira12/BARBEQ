@@ -1,6 +1,6 @@
 <?php
-
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Auth;
 use App\Models\Bayar;
 use App\Models\Expedisi;
@@ -26,19 +26,22 @@ class KeuanganController extends Controller
         if ($isAdmin) {
             $pesanans = Pesanan::where('status_id', 3)
                                 ->where('bayar_id', 2)
+                                ->where('statusverifikasi_id', 2)
                                 ->get();
         } else {
             $pesanans = Pesanan::where('user_id', auth()->id())
                                 ->where('status_id', 3)
                                 ->get();
+
+
         }
 
         // Mengambil relasi untuk diperlihatkan di view
-        $pesanans->load(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar', 'status', 'user','expedisi']);
+        $pesanans->load(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar', 'status', 'user', 'expedisi']);
 
         // Mengembalikan view bersama data yang diperlukan
         return view('keuangan.index', [
-            'title' => 'Pemasukan',
+            'title' => 'Pemasukan/Setor',
             'pesanans' => $pesanans,
             'pembelis' => Pembeli::all(),
             'statusverifikasis' => Statusverifikasi::all(),
@@ -51,21 +54,26 @@ class KeuanganController extends Controller
         ]);
     }
 
-    function store(Request $request)
+    public function store(Request $request)
     {
-        $param = $request->except('_token', 'gambar');
+        $param = $request->except('_token', 'gambar', 'gambar2');
+
+        // Validasi
         $validator = Validator::make($param, [
-            'gambar' => 'image|file|max:1024',
+            'gambar' => 'nullable|image|file|max:1024',
+            'gambar2' => 'nullable|image|file|max:1024',
             'produk_id' => 'required',
             'pembeli_id' => 'required',
+            'harga' => 'required',
+            'jumlah_produk' => 'required',
+            'alamat' => 'required',
             'user_id' => 'required',
             'status_id' => 'exists:statuss,id',
-            'bayar_id' => 'exists:bayarss,id',
-            'expedisi_id' => 'required',
-            'statusverifikasi_id' =>'exists:statusverifikasis,id',
+            'bayar_id' => 'required',
+            'statusverifikasi_id' => 'exists:statusverifikasis,id',
             'rekening_id' => 'required',
+            'expedisi_id' => 'required',
         ]);
-
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
@@ -83,31 +91,31 @@ class KeuanganController extends Controller
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
             $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('setor-images'), $filename);
-            $param['gambar'] = 'setor-images/' . $filename;
+            $file->move(public_path('bayar-images'), $filename);
+            $param['gambar'] = 'bayar-images/' . $filename;
+        }
+
+        if ($request->hasFile('gambar2')) {
+            $file2 = $request->file('gambar2');
+            $filename2 = time() . '.' . $file2->getClientOriginalExtension();
+            $file2->move(public_path('setor-images'), $filename2);
+            $param['gambar2'] = 'setor-images/' . $filename2;
         }
 
         $create = Pesanan::create($param);
 
         if ($create) {
-            return redirect()->route('keuangan.index')->with('success', 'pesanan Created');
+            return redirect()->route('keuangan.index')->with('success', 'Pesanan Created');
         }
 
         return back()->with('error', 'Oops, something went wrong!');
     }
 
-
-    public function edit($id)
-    {
-        $pesanan = Pesanan::findOrFail($id);
-        return view('keuangan.update', ['title' => 'Edit Setor', 'pesanan' => $pesanan]);
-    }
-
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'gambar' => 'image|file|max:1024',
-
+            'gambar' => 'nullable|image|file|max:1024',
+            'gambar2' => 'nullable|image|file|max:1024',
         ]);
 
         if ($validator->fails()) {
@@ -115,13 +123,20 @@ class KeuanganController extends Controller
         }
 
         $pesanan = Pesanan::findOrFail($id);
-        $param = $request->except('_method', '_token', 'gambar', 'oldImage');
+        $param = $request->except('_method', '_token', 'gambar', 'gambar2', 'oldImage', 'oldImage2');
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
             $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('setor-images'), $filename);
-            $param['gambar'] = 'setor-images/' . $filename;
+            $file->move(public_path('bayar-images'), $filename);
+            $param['gambar'] = 'bayar-images/' . $filename;
+        }
+
+        if ($request->hasFile('gambar2')) {
+            $file2 = $request->file('gambar2');
+            $filename2 = time() . '.' . $file2->getClientOriginalExtension();
+            $file2->move(public_path('setor-images'), $filename2);
+            $param['gambar2'] = 'setor-images/' . $filename2;
         }
 
         $update = $pesanan->update($param);
@@ -133,6 +148,49 @@ class KeuanganController extends Controller
         return back()->with('error', 'Not Updated');
     }
 
+    public function edit($id)
+    {
+        $pesanan = Pesanan::findOrFail($id);
+        return view('keuangan.update', ['title' => 'Edit Setor', 'pesanan' => $pesanan]);
+    }
+
+    // public function update(Request $request, $id)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'gambar' => 'nullable|image|file|max:1024',
+    //         'gambar2' => 'nullable|image|file|max:1024',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return back()->withErrors($validator)->withInput();
+    //     }
+
+    //     $pesanan = Pesanan::findOrFail($id);
+    //     $param = $request->except('_method', '_token', 'gambar', 'gambar2', 'oldImage', 'oldImage2');
+
+    //     if ($request->hasFile('gambar')) {
+    //         $file = $request->file('gambar');
+    //         $filename = time() . '.' . $file->getClientOriginalExtension();
+    //         $file->move(public_path('bayar-images'), $filename);
+    //         $param['gambar'] = 'bayar-images/' . $filename;
+    //     }
+
+    //     if ($request->hasFile('gambar2')) {
+    //         $file2 = $request->file('gambar2');
+    //         $filename2 = time() . '.' . $file2->getClientOriginalExtension();
+    //         $file2->move(public_path('setor-images'), $filename2);
+    //         $param['gambar2'] = 'setor-images/' . $filename2;
+    //     }
+
+    //     $update = $pesanan->update($param);
+
+    //     if ($update) {
+    //         return redirect()->route('keuangan.index')->with('success', 'Setor Updated');
+    //     }
+
+    //     return back()->with('error', 'Not Updated');
+    // }
+
     public function destroy($id)
     {
         Pesanan::where($id)->delete();
@@ -141,7 +199,7 @@ class KeuanganController extends Controller
 
     public function show($id)
     {
-        $pesanan = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'user', 'bayar', 'status','rekening'])->findOrFail($id);
+        $pesanan = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'user', 'bayar', 'status', 'rekening'])->findOrFail($id);
         return view('keuangan.show', ['title' => 'Detail Setoran/Pemasukan', 'pesanan' => $pesanan]);
     }
 
@@ -174,12 +232,20 @@ class KeuanganController extends Controller
             ->addColumn('gambar', function ($data) {
                 return '<img src="' . asset($data->gambar) . '" class="img-circle" style="width:50px">';
             })
+            ->addColumn('gambar2', function ($data) {
+                if ($data->gambar2) {
+                    return '<img src="' . asset('setor-images/' . $data->gambar2) . '" class="img-circle" style="width:50px">';
+                } else {
+                    return 'Belum ada setor';
+                }
+            })
             ->addColumn('action', function ($data) {
                 $btn = '<a class="btn btn-default" href="admin/' . $data->name . '">Edit</a>';
                 $btn .= ' <button class="btn btn-danger btn-xs btnDelete" style="padding: 5px 6px;" onclick="fnDelete(this,' . $data->user_id . ')">Delete</button>';
                 return $btn;
             })
-            ->rawColumns(['gambar', 'action'])
+            ->rawColumns(['gambar', 'gambar2', 'action'])
             ->make(true);
     }
+
 }
