@@ -40,8 +40,19 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="mb-3">
+                    <label for="" class="form-label">Kategori</label>
+                    <select class="form-select form-select-md" name="kategori_id" id="">
+                        @foreach ($kategoris ?? [] as $item)
+                            <option value="{{ $item->id }}" {{ old('kategori_id') == $item->id ? 'selected' : '' }}>
+                                {{ $item->kategori }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+
+                {{-- <div class="mb-3">
                     <label for="" class="form-label">Kategori</label>
                     <select class="form-select form-select-md" name="kategori_id" id="">
                         @foreach ($kategoris as $item)
@@ -49,7 +60,7 @@
                                 {{ $item->kategori }} </option>
                         @endforeach
                     </select>
-                </div>
+                </div> --}}
 
                 <div class="mb-3">
                     <label for="" class="form-label">Harga </label>

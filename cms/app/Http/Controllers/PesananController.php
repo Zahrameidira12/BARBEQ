@@ -21,25 +21,33 @@ class PesananController extends Controller
         $user = auth()->user();
         $query = Pesanan::query();
 
-        // Filter pesanan berdasarkan peran pengguna dan status pembayaran serta verifikasi
         if ($user->isadmin) {
-            // Jika user adalah admin, tampilkan pesanan dengan bayar_id selain 1, seperti 2,3,4 dll
-            $query->where('bayar_id', '!=', 1)
-                  ->whereIn('statusverifikasi_id', [0, 1]);
+            $query->where('bayar_id', '>', 1)
+                  ->where(function ($q) {
+                      $q->whereNull('statusverifikasi_id')
+                        ->orWhereIn('statusverifikasi_id', [0, 1]);
+                  });
         } else {
-            // Jika user adalah user biasa, tampilkan pesanan dengan bayar_id 1 dan statusverifikasi_id 0 atau 1,
-            // atau pesanan dengan bayar_id 2 dan statusverifikasi_id 2
-            $query->where(function ($query) {
-                      $query->where('bayar_id', 1)
-                            ->whereIn('statusverifikasi_id', [0, 1]);
-                    })
-                    ->orWhere(function ($query) {
-                        $query->where('bayar_id', '!=', 1)
-                            ->where('statusverifikasi_id', 2);
-                    });
-        }
+            $query->where('user_id', $user->id)
+              ->where(function ($q) {
+                  $q->where(function ($q) {
+                      $q->where('bayar_id', 1)
+                        ->where(function ($q) {
+                            $q->whereIn('statusverifikasi_id', [0, 1])
+                              ->orWhereNull('statusverifikasi_id');
+                        });
+                  })
+                  ->orWhere(function ($q) {
+                      $q->where('bayar_id', '!=', 1)
+                        ->where('statusverifikasi_id', 2);
+                  });
+              });
 
-        $pesanans = $query->with(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar','expedisi'])->get();
+
+            }
+
+
+        $pesanans = $query->with(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar', 'expedisi'])->get();
 
         return view('pesanan.index', [
             'title' => 'Pesanan',
@@ -51,7 +59,6 @@ class PesananController extends Controller
             'rekenings' => Rekening::all(),
             'bayars' => Bayar::all(),
             'expedisis' => Expedisi::all(),
-
         ]);
     }
 

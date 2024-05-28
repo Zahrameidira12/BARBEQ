@@ -21,8 +21,63 @@
                 href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" />
 
             @can('admin')
-                <h6 style="color: red;">setor bisa dilakukan jika resi dan bukti pembayaran ada!!</h6>
+
+            <div
+            style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; flex: 1;">
+            <div
+                style="background-color: #001aff; color: white; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div>
+                <p style="margin: 0; font-weight: bold;">Total Pendapatan All User</p>
+                <p style="margin: 0;">Rp. {{ number_format($totalall, 0, ',', '.') }}</p>
+            </div>
+        </div>
+        <br>
+                <h6 style="color: red;">Setor bisa dilakukan jika resi dan bukti pembayaran ada!!</h6>
+
             @endcan
+            @cannot('admin')
+                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+
+                    <div
+                        style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; flex: 1;">
+                        <div
+                            style="background-color: #001aff; color: white; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div>
+                            <p style="margin: 0; font-weight: bold;">Total Pendapatan</p>
+                            <p style="margin: 0;">Rp. {{ number_format($totalPendapatan, 0, ',', '.') }}</p>
+                        </div>
+                    </div>
+
+                    <div
+                        style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; flex: 1;">
+                        <div
+                            style="background-color: #28A745; color: white; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div>
+                            <p style="margin: 0; font-weight: bold;">Total Pendapatan COD</p>
+                            <p style="margin: 0;">Rp. {{ number_format($totalcod, 0, ',', '.') }}</p>
+                        </div>
+                    </div>
+
+                    <div
+                        style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; flex: 1;">
+                        <div
+                            style="background-color: #ff0b0b; color: white; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div>
+                            <p style="margin: 0; font-weight: bold;">Total Pendapatan Transfer</p>
+                            <p style="margin: 0;">Rp. {{ number_format($totaltransfer, 0, ',', '.') }}</p>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            @endcannot
 
             <table id="pesanan" class="table table-striped" style="width:100%">
                 <thead>
@@ -35,25 +90,22 @@
                         @cannot('admin')
                             <th scope="col">Nama Produk</th>
                             <th scope="col">Harga total</th>
-                            <th scope="col">jumlah produk</th>
+                            <th scope="col">Jumlah produk</th>
                             <th scope="col">Status</th>
                         @endcannot
-                        <th scope="col">cara transaksi</th>
+                        <th scope="col">Cara transaksi</th>
                         <th scope="col">
                             @if (auth()->user()->isadmin)
-                                bukti setor
+                                Bukti setor
                             @else
                                 Pemasukan
                             @endif
                         </th>
                         @can('admin')
-                            <th scope="col">nama bank</th>
-                            <th scope="col">rek penjual</th>
+                            <th scope="col">Nama bank</th>
+                            <th scope="col">Rek penjual</th>
                         @endcan
-                        {{-- @can('admin') --}}
                         <th scope="col">Action</th>
-                        {{-- @endcan --}}
-                        {{-- <th scope="col">#</th> --}}
                     </tr>
                 </thead>
 
@@ -63,34 +115,32 @@
                             <td>{{ $loop->iteration }}</td>
                             @can('admin')
                                 <td>{{ $item->user ? $item->user->name : 'Penjual tidak tersedia' }}</td>
-                                {{-- <td>{{ $item->status ? $item->status->status : 'status tidak tersedia' }} --}}
                             @endcan
                             @cannot('admin')
                                 <td>{{ $item->produk ? $item->produk->nama_produk : 'Produk tidak tersedia' }}</td>
-                                <td>{{ $item->harga ?? 'harga tidak ada' }}</td>
-                                <td>{{ $item->jumlah_produk ?? 'jumlah tidak ada' }}</td>
+                                <td>{{ $item->harga ?? 'Harga tidak ada' }}</td>
+                                <td>{{ $item->jumlah_produk ?? 'Jumlah tidak ada' }}</td>
                                 <td>{{ $item->statusverifikasi ? $item->statusverifikasi->statusverifikasi : 'Verifikasi tidak tersedia' }}
                                 </td>
                             @endcannot
-                            <td>{{ $item->bayar ? $item->bayar->cara_bayar : ' tidak tersedia' }}</td>
-
+                            <td>{{ $item->bayar ? $item->bayar->cara_bayar : 'Tidak tersedia' }}</td>
                             <td>
                                 @if ($item->gambar2)
                                     <img src="{{ asset($item->gambar2) }}" alt="Bukti setor" style="max-height: 70px"
                                         class="img-fluid mt-2 d-block">
                                 @else
-                                    tidak ada setor
+                                    Tidak ada setor
                                 @endif
                             </td>
                             @can('admin')
                                 <td>{{ $item->rekening ? $item->rekening->nama_bank : 'Rekening tidak tersedia' }}</td>
                                 <td>{{ $item->rekening ? $item->rekening->no_rek : 'Rekening tidak tersedia' }}</td>
                             @endcan
-
                             <td style="display: flex; align-items: center;">
                                 <a href="{{ route('keuangan.show', $item->id) }}" class="btn btn-danger btn-sm"
-                                    style="width: 30px; height: 30px;"><i class="bi bi-wallet"></i></a>
-                                {{-- <a href="{{ route('keuangan.edit', $item->id) }}" class="btn btn-danger btn-sm" style="width: 30px; height: 30px;"><i class="bi bi-cash-coin"></i></a> --}}
+                                    style="width: 30px; height: 30px;">
+                                    <i class="bi bi-wallet"></i>
+                                </a>
                                 @can('admin')
                                     <form action="{{ route('keuangan.destroy', $item->id) }}" method="post" class="d-inline">
                                         @method('delete')
@@ -102,12 +152,7 @@
                                         </button>
                                     </form>
                                 @endcan
-
-
-
                             </td>
-
-
                         </tr>
                     @endforeach
                 </tbody>

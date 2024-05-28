@@ -37,7 +37,11 @@
                             <th scope="col">#</th>
                             <th scope="col">Nama Pembeli</th>
                             <th scope="col">Produk</th>
+                            <th scope="col">harga</th>
+                            @can('admin')
                             <th scope="col">alamat</th>
+                            @endcan
+                            <th scope="col">cara bayar</th>
                             <th scope="col">Resi</th>
                             <th scope="col">Status</th>
                             <th scope="col">Action</th>
@@ -49,7 +53,8 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->pembeli ? $item->pembeli->name : 'Pembeli tidak ada' }}</td>
                                 <td>{{ $item->produk ? $item->produk->nama_produk : 'Produk tidak tersedia' }}</td>
-                                <td>{{ $item->harga ? $item->alamat : 'Harga tidak ada' }}</td>
+                                <td>{{ $item->harga ? $item->harga : 'Harga tidak ada' }}</td>
+                                <td>{{ $item->bayar ? $item->bayar->cara_bayar : 'Bayar tidak tersedia' }}</td>
                                 <td>
                                     <div>
                                         @if ($item->gambar3)

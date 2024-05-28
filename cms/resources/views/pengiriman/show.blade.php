@@ -7,7 +7,6 @@
                 <div class="col-md-4"><strong>ID Pesanan:</strong></div>
                 <div class="col-md-8">{{ $pesanan->id }}</div>
             </div>
-
             <div class="row mb-3">
                 <div class="col-md-4 mt-4">
                     <strong>
@@ -19,14 +18,17 @@
                         <img src="{{ asset($pesanan->gambar3) }}" alt="" width="200" height="150"
                             alt="User Image" style="float: left; margin-center: 10px;">
                     @else
-                        Penjual belum ada resi pengiriman
+                         belum ada resi pengiriman
                     @endif
                 </div>
             </div>
-
             <div class="row mb-3">
                 <div class="col-md-4"><strong>Expedisi:</strong></div>
                 <div class="col-md-8">{{ $pesanan->expedisi->expedisi }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4"><strong>Cara bayar:</strong></div>
+                <div class="col-md-8">{{ $pesanan->bayar->cara_bayar }}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-4"><strong>Status Pengiriman:</strong></div>

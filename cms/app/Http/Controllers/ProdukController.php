@@ -6,9 +6,8 @@ namespace App\Http\Controllers;
 use \Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 // use Illuminate\Http\Request;
-use App\Models\kategori;
-// use App\Models\Produk;
-
+use App\Models\Kategori;
+use App\Models\User;
 use App\Models\Produk;
 use App\Services\Gateway;
 use Illuminate\Http\Request;
@@ -21,26 +20,37 @@ class ProdukController extends Controller
 {
 
     public function index()
-    {
+{
+    $users = User::all(); // Mendapatkan semua pengguna
 
-        if (auth()->user()->isadmin) {
-            $produks = Produk::all();
-        }
 
-        else {
-            $produks = Produk::where('user_id', auth()->id())->get();
-        }
-
-        return view('produk.index', ['title' => 'Produk', 'produks' => $produks]);
+    if (auth()->user()->isadmin) {
+        $produks = Produk::all();
+    } else {
+        $produks = Produk::where('user_id', auth()->id())->get();
     }
 
+    return view('produk.index', [
+        'title' => 'Produk',
+        'produks' => $produks,
+        'users' => $users
+    ]);
+}
 
 
-    public function create()
-    {
-        return view('produk.create', ['title' => 'Tambah Produk', 'produks' => produk::all(), 'kategoris' => Kategori::all()]);
 
-    }
+
+public function create()
+{
+    // Ambil kategori yang dimiliki oleh user yang sedang login
+    $kategoris = auth()->user()->kategoris;
+
+    return view('produk.create', [
+        'title' => 'Tambah Produk',
+        'kategoris' => $kategoris,
+    ]);
+}
+
 
     function store(Request $request)
     {//dd($request->all());

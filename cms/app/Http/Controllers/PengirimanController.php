@@ -16,23 +16,33 @@ class PengirimanController extends Controller
 {
     public function index(Request $request)
     {
-        $user = auth()->user();
+          $user = auth()->user();
 
-        $pengirimans = Pesanan::where('user_id', $user->id)
-            ->where(function ($query) {
-                $query->where('bayar_id', 1)->whereIn('statusverifikasi_id', [0, 1])
-                    ->orWhere(function ($query) {
-                        $query->where('bayar_id', 2)->where('statusverifikasi_id', 2);
-                    });
-            })
-            ->get();
+    $pengirimans = Pesanan::where('user_id', $user->id)
+        ->where(function ($query) {
+            $query->where('bayar_id', 1)
+                ->whereIn('statusverifikasi_id', [0, 1])
+                ->orWhereNull('statusverifikasi_id');
+        })
+        ->orWhere(function ($query) use ($user) { // Gunakan $user pada klausa orWhere
+            $query->where('user_id', $user->id) // Pertimbangkan user_id
+                ->where('bayar_id', 2)
+                ->where('statusverifikasi_id', 2);
+        })
+        ->get();
 
         return view('pengiriman.index', [
             'title' => 'Pengiriman',
             'pengirimans' => $pengirimans,
+            'pesanans' => Pesanan::all(),
+            'pembelis' => Pembeli::all(),
             'statuss' => Status::all(),
+            'statusverifikasis' => Statusverifikasi::all(),
+            'users' => User::all(),
+            'expedisis' => Expedisi::all()
         ]);
     }
+
 
     public function show($id)
     {
@@ -63,7 +73,7 @@ class PengirimanController extends Controller
         $update = $pesanan->update($param);
 
         if ($update) {
-            return redirect()->route('pengiriman.index')->with('success', 'Setor Updated');
+            return redirect()->route('pengiriman.index')->with('success', 'Resi Updated');
         }
 
         return back()->with('error', 'Not Updated');

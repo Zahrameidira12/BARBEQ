@@ -40,6 +40,7 @@
                         @can('admin')
                         <th scope="col">user</th>
                         @endcan
+                        <th scope="col">action</th>
                     </tr>
                 </thead>
 
@@ -52,6 +53,18 @@
                             @can('admin')
                             <td>{{ $item->user ? $item->user->name : 'user tidak ada' }}</td>
                             @endcan
+                            <td>
+                                <form action="/categori/{{ $item->id }}" method="post" class="d-inline">
+                                    <!-- Timpa method post menjadi delete -->
+                                    @method('delete')
+                                    @csrf
+                                    <button type="submit"
+                                        onclick="return confirm('Apakah anda yakin ingin hapus ? {{ $item->kategori }}')"
+                                        class="badge bg-danger border-0" style="width: 30px; height: 30px;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                            </td>
 
                         </tr>
                     @endforeach

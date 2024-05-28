@@ -52,13 +52,18 @@ class User extends Authenticatable
 
     public function produk()
     {
-        return $this->hasMany(produk::class);
+        return $this->hasMany(Produk::class);
+    }
+    public function pesanan()
+    {
+        return $this->hasMany(Pesanan::class);
     }
 
-    public function kategori()
+    public function kategoris()
     {
         return $this->hasMany(Kategori::class);
     }
+
     public function rekenings()
     {
         return $this->hasMany(Rekening::class);

@@ -68,6 +68,11 @@ class CategoriController extends Controller
         return back()->with('error', 'Oops, something went wrong!');
     }
 
+    public function destroy($id)
+{
+    Produk::where('id', $id)->delete();
+    return redirect('categori')->with('success', 'Kategori Berhasil dihapus');
+}
 
     public function fnGetData(Request $request)
     {

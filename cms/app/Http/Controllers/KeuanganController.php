@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
@@ -25,19 +26,71 @@ class KeuanganController extends Controller
         // Query untuk mendapatkan pesanan sesuai dengan role user
         if ($isAdmin) {
             $pesanans = Pesanan::where('status_id', 3)
-                                ->where('bayar_id', 2)
-                                ->where('statusverifikasi_id', 2)
-                                ->get();
+                ->where('bayar_id', '>', 1) // Mengubah kondisi bayar_id dari 2 ke atas
+                ->where('statusverifikasi_id', 2)
+                ->get();
         } else {
             $pesanans = Pesanan::where('user_id', auth()->id())
-                                ->where('status_id', 3)
-                                ->get();
-
-
+                ->where('status_id', 3)
+                ->get();
         }
 
         // Mengambil relasi untuk diperlihatkan di view
         $pesanans->load(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar', 'status', 'user', 'expedisi']);
+
+        $totalall = Pesanan::where(function ($query) {
+            $query->where(function ($query) {
+                $query->where('status_id', 3)
+                    ->where('bayar_id', 1);
+            })
+            ->orWhere(function ($query) {
+                $query->where('status_id', 3)
+                    ->where('bayar_id', '>', 1)
+                    ->where('statusverifikasi_id', 2);
+            });
+        })->sum('harga');
+
+
+        // Menghitung total pendapatan berdasarkan kondisi
+        $user_id = auth()->id();
+        $totalPendapatan = Pesanan::where('user_id', $user_id)
+            ->where(function ($query) {
+                $query->where(function ($query) {
+                    $query->where('status_id', 3)
+                        ->where('bayar_id', 1);
+                })
+                    ->orWhere(function ($query) {
+                        $query->where('status_id', 3)
+                            ->where('bayar_id', '>', 1)
+                            ->where('statusverifikasi_id', 2);
+                    });
+            })
+            ->sum('harga');
+
+
+            $user_id = auth()->id();
+            $totalcod = Pesanan::where('user_id', $user_id)
+                ->where(function ($query) {
+                    $query->where(function ($query) {
+                        $query->where('status_id', 3)
+                            ->where('bayar_id', 1);
+                    });
+
+                })
+                ->sum('harga');
+
+
+                $user_id = auth()->id();
+        $totaltransfer = Pesanan::where('user_id', $user_id)
+            ->where(function ($query) {
+                $query->where(function ($query) {
+                        $query->where('status_id', 3)
+                            ->where('bayar_id', '>', 1)
+                            ->where('statusverifikasi_id', 2);
+                    });
+            })
+            ->sum('harga');
+
 
         // Mengembalikan view bersama data yang diperlukan
         return view('keuangan.index', [
@@ -51,6 +104,10 @@ class KeuanganController extends Controller
             'bayars' => Bayar::all(),
             'statuss' => Status::all(),
             'expedisis' => Expedisi::all(),
+            'totalPendapatan' => $totalPendapatan,
+            'totalcod' => $totalcod,
+            'totaltransfer' => $totaltransfer,
+            'totalall' => $totalall,
         ]);
     }
 
@@ -98,7 +155,7 @@ class KeuanganController extends Controller
         if ($request->hasFile('gambar2')) {
             $file2 = $request->file('gambar2');
             $filename2 = time() . '.' . $file2->getClientOriginalExtension();
-            $file2->move(public_path('setor-images'), $filename2);
+            $file2->move(public_path('-images'), $filename2);
             $param['gambar2'] = 'setor-images/' . $filename2;
         }
 
@@ -247,5 +304,4 @@ class KeuanganController extends Controller
             ->rawColumns(['gambar', 'gambar2', 'action'])
             ->make(true);
     }
-
 }

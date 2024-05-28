@@ -18,32 +18,26 @@
                 <!-- Ringkasan Penjualan -->
                 <div style="border: 1px solid #ccc; margin-bottom: 20px; padding: 15px;">
                     <h3>Ringkasan Penjualan</h3>
-                    <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; gap: 20px; margin-top: 15px;">
                         <!-- Total Produk Terjual -->
-                        <div style="text-align: center;">
-                            <div style="background-color: #007BFF; color: white; padding: 10px; border-radius: 5px;">
+                        <div style="text-align: center; flex: 1;">
+                            <div style="background-color: #007BFF; color: white; padding: 10px; border-radius: 5px; display: inline-block;">
                                 <i class="fas fa-shopping-cart"></i>
                             </div>
-                            <p>Total Produk Terjual</p>
+                            <p>Total Produk </p>
                             <p>500</p>
                         </div>
-                        <!-- Total Pendapatan -->
-                        <div style="text-align: center;">
-                            <div style="background-color: #28A745; color: white; padding: 10px; border-radius: 5px;">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                            <p>Total Pendapatan</p>
-                            <p>Rp. 500.000.000</p>
-                        </div>
+
                         <!-- Pesanan Pending -->
-                        <div style="text-align: center;">
-                            <div style="background-color: #DC3545; color: white; padding: 10px; border-radius: 5px;">
+                        <div style="text-align: center; flex: 1;">
+                            <div style="background-color: #DC3545; color: white; padding: 10px; border-radius: 5px; display: inline-block;">
                                 <i class="fas fa-exclamation-triangle"></i>
                             </div>
                             <p>Pesanan Pending</p>
                             <p>20</p>
                         </div>
                     </div>
+
 
                     <!-- Grafik Penjualan -->
                     <div style="margin-top: 20px;">
