@@ -158,46 +158,48 @@ public function create()
 
 
     public function fnGetData(Request $request)
-    {
-        // set page parameter for pagination
-        $page = ($request->start / $request->length) + 1;
-        $request->merge(['page' => $page]);
+{
+    // set page parameter for pagination
+    $page = ($request->start / $request->length) + 1;
+    $request->merge(['page' => $page]);
 
-        $data  = new Produk();
-        $data = $data->where('id', '!=', 1)->with('id');
+    $data  = new Produk();
+    $data = $data->where('id', '!=', 1)->with('id');
 
-        if ($request->input('search')['value'] != null && $request->input('search')['value'] != '') {
-            $data = $data->where('kode', 'LIKE', '%' . $request->keyword . '%')->orWhere('nama_produk', 'LIKE', '%' . $request->keyword . '%')
-                ->whereHas('role', function ($query) use ($request) {
-                    $query->where('nama_produk', 'LIKE', '%' . $request->keyword . '%');
-                });
-        }
-
-        //Setting Limit
-        $limit = 10;
-        if (!empty($request->input('length'))) {
-            $limit = $request->input('length');
-        }
-
-        $data = $data->orderBy($request->columns[$request->order[0]['column']]['nama_produk'], $request->order[0]['dir'])->paginate($limit);
-
-
-        $data = json_encode($data);
-        $data = json_Decode($data);
-
-        return DataTables::of($data->data)
-            ->skipPaging()
-            ->setTotalRecords($data->total)
-            ->setFilteredRecords($data->total)
-            ->addColumn('gambar', function ($data) {
-                return '<img src="' . $data->gambar . '" class="img-circle" style="width:50px">';
-            })
-            ->addColumn('action', function ($data) {
-                $btn = '<a class="btn btn-default" href="admin/' . $data->produk_id . '">Edit</a>';
-                $btn .= ' <button class="btn btn-danger btn-xs btnDelete" style="padding: 5px 6px;" onclick="fnDelete(this,' . $data->user_id . ')">Delete</button>';
-                return $btn;
-            })
-            ->rawColumns(['gambar', 'action'])
-            ->make(true);
+    if ($request->input('search')['value'] != null && $request->input('search')['value'] != '') {
+        $keyword = $request->input('search')['value'];
+        $data = $data->where(function($query) use ($keyword) {
+            $query->where('kode', 'LIKE', '%' . $keyword . '%')
+                ->orWhere('nama_produk', 'LIKE', '%' . $keyword . '%')
+                ->orWhere('harga', $keyword);
+        });
     }
+
+    // Setting Limit
+    $limit = 10;
+    if (!empty($request->input('length'))) {
+        $limit = $request->input('length');
+    }
+
+    $data = $data->orderBy($request->columns[$request->order[0]['column']]['nama_produk'], $request->order[0]['dir'])->paginate($limit);
+
+    $data = json_encode($data);
+    $data = json_decode($data);
+
+    return DataTables::of($data->data)
+        ->skipPaging()
+        ->setTotalRecords($data->total)
+        ->setFilteredRecords($data->total)
+        ->addColumn('gambar', function ($data) {
+            return '<img src="' . $data->gambar . '" class="img-circle" style="width:50px">';
+        })
+        ->addColumn('action', function ($data) {
+            $btn = '<a class="btn btn-default" href="admin/' . $data->produk_id . '">Edit</a>';
+            $btn .= ' <button class="btn btn-danger btn-xs btnDelete" style="padding: 5px 6px;" onclick="fnDelete(this,' . $data->user_id . ')">Delete</button>';
+            return $btn;
+        })
+        ->rawColumns(['gambar', 'action'])
+        ->make(true);
+}
+
 }

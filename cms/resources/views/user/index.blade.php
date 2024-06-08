@@ -24,6 +24,8 @@
             <tr>
                 <th>Name</th>
                 <th>Email</th>
+                <th>No tlp</th>
+                <th>foto</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
@@ -34,6 +36,15 @@
                 <tr>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
+                    <td>{{ $user->no_tlp }}</td>
+                    <td>
+                        @if ($user->gambar)
+                            <img src="{{ asset('user-images/' . $user->gambar) }}" style="max-height: 100px" class="img-fluid mt-2 d-block" alt="">
+                        @else
+                            No Image
+                        @endif
+                    </td>
+
                     <td>{{ $user->isadmin ? 'Admin' : 'User' }}</td>
 
                     <td>

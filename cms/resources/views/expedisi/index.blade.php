@@ -39,6 +39,7 @@
                         <td>{{ $item->expedisi }}</td>
                         <td>{{ $item->harga }}</td>
                         <td>
+                            <a href="{{ route('banner.edit', $item->id) }}" class="btn btn-danger btn-sm">Edit</a>
                             <form action="/expedisi/{{ $item->id }}" method="post" class="d-inline">
                                 @method('delete')
                                 @csrf

@@ -272,8 +272,19 @@ class KeuanganController extends Controller
             $data = $data->where('id', 'LIKE', '%' . $keyword . '%')
                 ->orWhereHas('user', function ($query) use ($keyword) {
                     $query->where('name', 'LIKE', '%' . $keyword . '%');
+                })->orWhereHas('pembeli', function ($query) use ($keyword) {
+                    $query->where('name', 'LIKE', '%' . $keyword . '%');
+                })->orWhereHas('produk', function ($query) use ($keyword) {
+                    $query->where('nama_produk', 'LIKE', '%' . $keyword . '%');
+                })->orWhereHas('statusverifikasi', function ($query) use ($keyword) {
+                    $query->where('statusverifikasi', 'LIKE', '%' . $keyword . '%');
+                })->orWhereHas('status', function ($query) use ($keyword) {
+                    $query->where('status', 'LIKE', '%' . $keyword . '%');
+                })->orWhereHas('bayar', function ($query) use ($keyword) {
+                    $query->where('cara_bayar', 'LIKE', '%' . $keyword . '%');
                 });
         }
+
 
         $limit = 10;
         if (!empty($request->input('length'))) {

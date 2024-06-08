@@ -53,7 +53,7 @@ class KategoriController extends Controller
             }
             return back()->with('error', $messages);
         }
-      
+
         $create = Kategori::create($param);
 
         if ($create) {
@@ -73,10 +73,13 @@ class KategoriController extends Controller
         $data = $data->where('id', '!=', 1)->with('id');
 
         if ($request->input('search')['value'] != null && $request->input('search')['value'] != '') {
-            $data = $data->where('kode', 'LIKE', '%' . $request->keyword . '%')->orWhere('kategori', 'LIKE', '%' . $request->keyword . '%')
-                ->whereHas('role', function ($query) use ($request) {
-                    $query->where('kategori', 'LIKE', '%' . $request->keyword . '%');
-                });
+            $data = $data->where(function($query) use ($request) {
+                $query->where('kode', 'LIKE', '%' . $request->keyword . '%')
+                      ->orWhere('kategori', 'LIKE', '%' . $request->keyword . '%')
+                      ->orWhereHas('role', function ($query) use ($request) {
+                          $query->where('kategori', 'LIKE', '%' . $request->keyword . '%');
+                      });
+            });
         }
 
         //Setting Limit
