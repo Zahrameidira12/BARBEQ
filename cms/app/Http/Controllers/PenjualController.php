@@ -95,8 +95,20 @@ class PenjualController extends Controller
 
     public function destroy($id)
     {
-        User::where('id', $id)->delete();
-        return redirect('user')->with('success', 'Produk Berhasil dihapus');
+        $userToDelete = User::find($id);
+
+        if (!$userToDelete) {
+            return redirect('penjual')->with('error', 'User tidak ditemukan');
+        }
+
+        $currentUser = auth()->user();
+
+        if ($currentUser->issuperadmin || $currentUser->isadmin) {
+            $userToDelete->delete();
+            return redirect('penjual')->with('success', 'User berhasil dihapus');
+        } else {
+            return redirect('penjual')->with('error', 'Anda tidak memiliki izin untuk menghapus user ini');
+        }
     }
 
     public function fnGetData(Request $request)

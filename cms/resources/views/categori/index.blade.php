@@ -11,13 +11,13 @@
             @endif
         </div>
 
-        @cannot('admin')
+        {{-- @cannot('admin') --}}
         <div style="border: 1px solid #ccc; margin-bottom: 20px; padding: 15px;">
 
                 <a href="/categori/create" class="btn btn-danger"><span data-feather='plus-circle'></span>
                     Tambah Kategori Produk</a>
             </div>
-        @endcannot
+        {{-- @endcannot --}}
 
     </div>
 
@@ -54,6 +54,7 @@
                             <td>{{ $item->user ? $item->user->name : 'user tidak ada' }}</td>
                             @endcan
                             <td>
+                                <a href="{{ route('categori.edit', $item->id) }}" class="btn btn-danger btn-sm">Edit</a>
                                 <form action="/categori/{{ $item->id }}" method="post" class="d-inline">
                                     <!-- Timpa method post menjadi delete -->
                                     @method('delete')

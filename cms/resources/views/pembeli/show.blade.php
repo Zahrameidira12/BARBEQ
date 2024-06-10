@@ -2,8 +2,11 @@
 @section('admin-magang')
 <div class="container mt-4">
     <div class="card" style="max-width: 800px; margin: auto;">
-        <div class="card-header">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h3>Detail Pembeli: {{ $pembeli->name }}</h3>
+            <a href="{{ route('pembeli.index') }}" class="btn btn-sm btn-danger"><span
+                    data-feather="arrow-right"></span></a>
         </div>
         <div class="card-body">
             <div class="row mb-3 mt-3">

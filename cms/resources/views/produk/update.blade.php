@@ -8,6 +8,20 @@
             @method('put')
             @csrf
             <h1 class="h2">Edit Produk</h1>
+
+            @can('superadmin')
+            <div class="mb-3">
+                <label for="" class="form-label">User</label>
+                <select class="form-select form-select-md" name="user_id" id="user_id">
+                    @foreach ($users as $user)
+                        @if (!$user->isadmin && !$user->issuperadmin)
+                            <option value="{{ $user->id }}" {{ $user->id == $produk->user_id ? 'selected' : '' }}>{{ $user->name }}</option>
+                        @endif
+                    @endforeach
+                </select>
+            </div>
+            @endcan
+
             <div class="mb-3">
                 <label for="nama_produk" class="form-label">Nama Produk</label>
                 <div class="input-group">
@@ -23,12 +37,14 @@
             <div class="mb-3">
                 <label for="kategori" class="form-label">Kategori</label>
                 <select class="form-select form-select-md" name="kategori_id" id="kategori">
-                    @foreach ($kategori as $item)
+                    @foreach ($kategoris as $item)
                         <option value="{{ $item->id }}" {{ old('kategori_id', $produk->kategori_id) == $item->id ? 'selected' : '' }}>
-                            {{ $item->kategori }} </option>
+                            {{ $item->kategori }}
+                        </option>
                     @endforeach
                 </select>
             </div>
+
 
             <div class="mb-3">
                 <label for="harga" class="form-label">Harga</label>
@@ -76,8 +92,10 @@
                     </div>
                 </div>
             </div>
-
-            <button type="submit" class="btn btn-primary w-100 mb-3">SIMPAN</button>
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <button type="submit" class="btn btn-primary w-50 mb-3 me-2">SIMPAN</button>
+                <a href="{{ route('produk.index') }}" class="btn btn-sm btn-danger w-50 mb-3">BATAL</a>
+            </div>
 
         </form>
     </div>

@@ -72,7 +72,10 @@
 
 
 
-            <button type="submit" class="btn btn-primary w-100 mb-3">SIMPAN</button>
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <button type="submit" class="btn btn-primary w-50 mb-3 me-2">SIMPAN</button>
+                <a href="{{ route('profil.index') }}" class="btn btn-sm btn-danger w-50 mb-3">BATAL</a>
+            </div>
 
         </form>
     </div>

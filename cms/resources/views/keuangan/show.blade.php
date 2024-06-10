@@ -2,6 +2,11 @@
 @section('admin-magang')
     <div class="container mt-4">
         <div class="card" style="max-width: 800px; margin: auto;">
+
+		<div class="card-header d-flex justify-content-end align-items-center">
+            <a href="{{ route('keuangan.index') }}" class="btn btn-sm btn-danger"><span
+                    data-feather="arrow-right"></span></a>
+        </div>
             <div class="card-body">
 
                 <div class="row mb-3">
@@ -24,7 +29,7 @@
                     <div class="col-md-4 mt-4">
 
                         <strong>
-                            @if (auth()->user()->isadmin)
+                            @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
                                 Bukti Setor
                             @else
                                 Bukti Pemasukan/TF dari Admin
@@ -43,7 +48,7 @@
                 </div>
 
 
-                @can('admin')
+                @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
                     <div class="row mb-3">
                         @if (Session::has('error'))
                             <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('error') }}</p>
@@ -68,7 +73,7 @@
 
                         </form>
                     </div>
-                @endcan
+                @endif
 
                 <div class="row mb-3 mt-4">
                     <div class="col-md-4"><strong>ID Pesanan:</strong></div>
@@ -94,68 +99,64 @@
                     <div class="col-md-8">{{ $pesanan->statusverifikasi->statusverifikasi }}</div>
                 </div>
                 @else
-                {{-- <div class="row mb-3">
-                    <div class="col-md-4"><strong>Status:</strong></div>
-                    <div class="col-md-8">cod, tidak ada verifikasi</div>
-                </div> --}}
 
                 @endif
 
 
-
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Expedisi:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->expedisi->expedisi }}</div>
+                    <div class="col-md-8">{{ $pesanan->expedisi->expedisi ?? '' }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Status Pengiriman:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->status->status }}</div>
+                    <div class="col-md-8">{{ $pesanan->status->status ?? '' }}</div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Penjual:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->user->name }}</div>
+                    <div class="col-md-8">{{ $pesanan->user->name ?? '' }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>No tlp Penjual:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->user->no_tlp }}</div>
+                    <div class="col-md-8">{{ $pesanan->user->no_tlp ?? '' }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Pembeli:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->pembeli->name }}</div>
+                    <div class="col-md-8">{{ $pesanan->pembeli->name ?? '' }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>No tlp Pembeli:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->pembeli->no_tlp }}</div>
+                    <div class="col-md-8">{{ $pesanan->pembeli->no_tlp ?? '' }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Alamat Pembeli:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->alamat }}</div>
+                    <div class="col-md-8">{{ $pesanan->alamat ?? '' }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Nama Produk:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->produk->nama_produk }}</div>
+                    <div class="col-md-8">{{ $pesanan->produk->nama_produk ?? '' }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Jumlah Produk:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->jumlah_produk }}</div>
+                    <div class="col-md-8">{{ $pesanan->jumlah_produk ?? '' }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Harga:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->harga }}</div>
+                    <div class="col-md-8">{{ $pesanan->harga ?? '' }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>ID Produk:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->produk->id }}</div>
+                    <div class="col-md-8">{{ $pesanan->produk->id ?? '' }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Kode Produk:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->produk->kode }}</div>
+                    <div class="col-md-8">{{ $pesanan->produk->kode ?? '' }}</div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4"><strong>Kategori:</strong></div>
-                    <div class="col-md-8">{{ $pesanan->produk->kategori->kategori }}</div>
+                    <div class="col-md-8">{{ $pesanan->produk->kategori->kategori ?? '' }}</div>
                 </div>
+
 
 
             </div>

@@ -2,6 +2,10 @@
 @section('admin-magang')
 <div class="container mt-4">
     <div class="card" style="max-width: 800px; margin: auto;">
+        <div class="card-header d-flex justify-content-end align-items-center">
+            <a href="{{ route('pengiriman.index') }}" class="btn btn-sm btn-danger"><span
+                    data-feather="arrow-right"></span></a>
+        </div>
         <div class="card-body">
             <div class="row mb-3 mt-3">
                 <div class="col-md-4"><strong>ID Pesanan:</strong></div>

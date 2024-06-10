@@ -20,24 +20,22 @@
             <link rel="stylesheet" type="text/css"
                 href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" />
 
-            @can('admin')
-
-            <div
-            style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; flex: 1;">
-            <div
-                style="background-color: #001aff; color: white; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                <i class="fas fa-dollar-sign"></i>
-            </div>
-            <div>
-                <p style="margin: 0; font-weight: bold;">Total Pendapatan All User</p>
-                <p style="margin: 0;">Rp. {{ number_format($totalall, 0, ',', '.') }}</p>
-            </div>
-        </div>
-        <br>
+            @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
+                <div
+                    style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; flex: 1;">
+                    <div
+                        style="background-color: #001aff; color: white; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-weight: bold;">Total Pendapatan All User</p>
+                        <p style="margin: 0;">Rp. {{ number_format($totalall, 0, ',', '.') }}</p>
+                    </div>
+                </div>
+                <br>
                 <h6 style="color: red;">Setor bisa dilakukan jika resi dan bukti pembayaran ada!!</h6>
-
-            @endcan
-            @cannot('admin')
+            @endif
+            @unless (auth()->user()->isadmin || auth()->user()->issuperadmin)
                 <div style="display: flex; gap: 20px; margin-bottom: 20px;">
 
                     <div
@@ -77,34 +75,34 @@
                     </div>
                 </div>
                 <br>
-            @endcannot
+            @endunless
 
             <table id="pesanan" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        @can('admin')
+                        @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
                             <th scope="col">Penjual</th>
-                        @endcan
-                        {{-- <th scope="col">Status </th> --}}
-                        @cannot('admin')
+                        @endif
+
+                        @unless(auth()->user()->isadmin || auth()->user()->issuperadmin)
                             <th scope="col">Nama Produk</th>
                             <th scope="col">Harga total</th>
                             <th scope="col">Jumlah produk</th>
                             <th scope="col">Status</th>
-                        @endcannot
+                        @endunless
                         <th scope="col">Cara transaksi</th>
                         <th scope="col">
-                            @if (auth()->user()->isadmin)
+                            @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
                                 Bukti setor
                             @else
                                 Pemasukan
                             @endif
                         </th>
-                        @can('admin')
+                        @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
                             <th scope="col">Nama bank</th>
                             <th scope="col">Rek penjual</th>
-                        @endcan
+                        @endif
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
@@ -113,16 +111,17 @@
                     @foreach ($pesanans as $item)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            @can('admin')
+                            @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
                                 <td>{{ $item->user ? $item->user->name : 'Penjual tidak tersedia' }}</td>
-                            @endcan
-                            @cannot('admin')
+                            @endif
+                            @unless (auth()->user()->isadmin || auth()->user()->issuperadmin)
                                 <td>{{ $item->produk ? $item->produk->nama_produk : 'Produk tidak tersedia' }}</td>
                                 <td>{{ $item->harga ?? 'Harga tidak ada' }}</td>
                                 <td>{{ $item->jumlah_produk ?? 'Jumlah tidak ada' }}</td>
                                 <td>{{ $item->statusverifikasi ? $item->statusverifikasi->statusverifikasi : 'Verifikasi tidak tersedia' }}
                                 </td>
-                            @endcannot
+                            @endunless
+
                             <td>{{ $item->bayar ? $item->bayar->cara_bayar : 'Tidak tersedia' }}</td>
                             <td>
                                 @if ($item->gambar2)
@@ -132,27 +131,30 @@
                                     Tidak ada setor
                                 @endif
                             </td>
-                            @can('admin')
+                            @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
                                 <td>{{ $item->rekening ? $item->rekening->nama_bank : 'Rekening tidak tersedia' }}</td>
                                 <td>{{ $item->rekening ? $item->rekening->no_rek : 'Rekening tidak tersedia' }}</td>
-                            @endcan
+                            @endif
                             <td style="display: flex; align-items: center;">
                                 <a href="{{ route('keuangan.show', $item->id) }}" class="btn btn-danger btn-sm"
-                                    style="width: 30px; height: 30px;">
+                                    style="width: 30px; height: 30px; margin-right: 3px;">
                                     <i class="bi bi-wallet"></i>
                                 </a>
-                                @can('admin')
-                                    <form action="{{ route('keuangan.destroy', $item->id) }}" method="post" class="d-inline">
+                                @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
+                                    <form action="{{ route('keuangan.destroy', $item->id) }}" method="post"
+                                        class="d-inline">
                                         @method('delete')
                                         @csrf
                                         <button type="submit"
                                             onclick="return confirm('Apakah anda yakin ingin batalkan pesanan ? {{ $item->pembeli->name }}')"
-                                            class="badge bg-danger border-0" style="width: 30px; height: 30px;">
+                                            class="badge bg-danger border-0"
+                                            style="width: 30px; height: 30px; margin-left: 3px;">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </form>
-                                @endcan
+                                @endif
                             </td>
+
                         </tr>
                     @endforeach
                 </tbody>

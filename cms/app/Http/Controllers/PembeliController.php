@@ -59,6 +59,9 @@ class PembeliController extends Controller
         return view('pembeli.show', ['title' => 'Detail Pembeli', 'pembeli' => $pembeli]);
     }
 
+
+
+
     public function update(Request $request, $id)
     {
         $param = $request->except('_method', '_token', 'gambar', 'oldImage');
@@ -97,9 +100,22 @@ class PembeliController extends Controller
 
     public function destroy($id)
     {
-        Pembeli::where('id', $id)->delete();
-        return redirect('pembeli')->with('success', 'Pembeli Berhasil dihapus');
+        $pembeliToDelete = Pembeli::find($id);
+
+        if (!$pembeliToDelete) {
+            return redirect('pembeli')->with('error', 'User tidak ditemukan');
+        }
+
+        $currentUser = auth()->user();
+
+        if ($currentUser->issuperadmin || $currentUser->isadmin) {
+            $pembeliToDelete->delete();
+            return redirect('pembeli')->with('success', 'User berhasil dihapus');
+        } else {
+            return redirect('pembeli')->with('error', 'Anda tidak memiliki izin untuk menghapus user ini');
+        }
     }
+
 
     public function fnGetData(Request $request)
     {

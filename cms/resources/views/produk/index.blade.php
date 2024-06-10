@@ -15,8 +15,7 @@
         <div style="border: 1px solid #ccc; margin-bottom: 20px; padding: 15px;">
                 <a href="/produk/create" class="btn btn-danger"><span data-feather='plus-circle'></span>
                     Tambah Produk</a>
-                {{-- <a href="/kategori/create" class="btn btn-danger"><span data-feather='plus-circle'></span>
-                    Tambah Kategori Produk</a> --}}
+               
             </div>
         @endcannot
 

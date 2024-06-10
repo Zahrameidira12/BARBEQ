@@ -12,7 +12,7 @@ class RegisterController extends Controller
         return view('register.index', ['title' => 'Register', 'active' => 'login']);
     }
 
-    // untuk menyimpan user yang registrasi
+
     public function store(Request $request)
     {    //dd('no_tlp');
         //dd('no_tlp');

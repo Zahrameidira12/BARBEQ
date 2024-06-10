@@ -22,11 +22,12 @@ class KeuanganController extends Controller
     {
         // Mendapatkan role user yang sedang login
         $isAdmin = auth()->user()->isadmin;
+        $isSuperAdmin = auth()->user()->issuperadmin;
 
-        // Query untuk mendapatkan pesanan sesuai dengan role user
-        if ($isAdmin) {
+
+        if ($isAdmin || $isSuperAdmin) {
             $pesanans = Pesanan::where('status_id', 3)
-                ->where('bayar_id', '>', 1) // Mengubah kondisi bayar_id dari 2 ke atas
+                ->where('bayar_id', '>', 1)
                 ->where('statusverifikasi_id', 2)
                 ->get();
         } else {
@@ -35,7 +36,7 @@ class KeuanganController extends Controller
                 ->get();
         }
 
-        // Mengambil relasi untuk diperlihatkan di view
+
         $pesanans->load(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar', 'status', 'user', 'expedisi']);
 
         $totalall = Pesanan::where(function ($query) {
@@ -43,15 +44,14 @@ class KeuanganController extends Controller
                 $query->where('status_id', 3)
                     ->where('bayar_id', 1);
             })
-            ->orWhere(function ($query) {
-                $query->where('status_id', 3)
-                    ->where('bayar_id', '>', 1)
-                    ->where('statusverifikasi_id', 2);
-            });
+                ->orWhere(function ($query) {
+                    $query->where('status_id', 3)
+                        ->where('bayar_id', '>', 1)
+                        ->where('statusverifikasi_id', 2);
+                });
         })->sum('harga');
 
 
-        // Menghitung total pendapatan berdasarkan kondisi
         $user_id = auth()->id();
         $totalPendapatan = Pesanan::where('user_id', $user_id)
             ->where(function ($query) {
@@ -68,31 +68,30 @@ class KeuanganController extends Controller
             ->sum('harga');
 
 
-            $user_id = auth()->id();
-            $totalcod = Pesanan::where('user_id', $user_id)
-                ->where(function ($query) {
-                    $query->where(function ($query) {
-                        $query->where('status_id', 3)
-                            ->where('bayar_id', 1);
-                    });
-
-                })
-                ->sum('harga');
-
-
-                $user_id = auth()->id();
-        $totaltransfer = Pesanan::where('user_id', $user_id)
+        $user_id = auth()->id();
+        $totalcod = Pesanan::where('user_id', $user_id)
             ->where(function ($query) {
                 $query->where(function ($query) {
-                        $query->where('status_id', 3)
-                            ->where('bayar_id', '>', 1)
-                            ->where('statusverifikasi_id', 2);
-                    });
+                    $query->where('status_id', 3)
+                        ->where('bayar_id', 1);
+                });
             })
             ->sum('harga');
 
 
-        // Mengembalikan view bersama data yang diperlukan
+        $user_id = auth()->id();
+        $totaltransfer = Pesanan::where('user_id', $user_id)
+            ->where(function ($query) {
+                $query->where(function ($query) {
+                    $query->where('status_id', 3)
+                        ->where('bayar_id', '>', 1)
+                        ->where('statusverifikasi_id', 2);
+                });
+            })
+            ->sum('harga');
+
+
+
         return view('keuangan.index', [
             'title' => 'Pemasukan/Setor',
             'pesanans' => $pesanans,
@@ -110,6 +109,7 @@ class KeuanganController extends Controller
             'totalall' => $totalall,
         ]);
     }
+
 
     public function store(Request $request)
     {
@@ -136,14 +136,13 @@ class KeuanganController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        // Ambil rekening_id berdasarkan user_id yang ada dalam pesanan
         $rekening = Rekening::where('user_id', $request->input('user_id'))->first();
 
         if (!$rekening) {
             return back()->with('error', 'Rekening tidak ditemukan.');
         }
 
-        $param['rekening_id'] = $rekening->id; // Set rekening_id dengan id rekening yang ditemukan
+        $param['rekening_id'] = $rekening->id;
 
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
@@ -211,42 +210,6 @@ class KeuanganController extends Controller
         return view('keuangan.update', ['title' => 'Edit Setor', 'pesanan' => $pesanan]);
     }
 
-    // public function update(Request $request, $id)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'gambar' => 'nullable|image|file|max:1024',
-    //         'gambar2' => 'nullable|image|file|max:1024',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return back()->withErrors($validator)->withInput();
-    //     }
-
-    //     $pesanan = Pesanan::findOrFail($id);
-    //     $param = $request->except('_method', '_token', 'gambar', 'gambar2', 'oldImage', 'oldImage2');
-
-    //     if ($request->hasFile('gambar')) {
-    //         $file = $request->file('gambar');
-    //         $filename = time() . '.' . $file->getClientOriginalExtension();
-    //         $file->move(public_path('bayar-images'), $filename);
-    //         $param['gambar'] = 'bayar-images/' . $filename;
-    //     }
-
-    //     if ($request->hasFile('gambar2')) {
-    //         $file2 = $request->file('gambar2');
-    //         $filename2 = time() . '.' . $file2->getClientOriginalExtension();
-    //         $file2->move(public_path('setor-images'), $filename2);
-    //         $param['gambar2'] = 'setor-images/' . $filename2;
-    //     }
-
-    //     $update = $pesanan->update($param);
-
-    //     if ($update) {
-    //         return redirect()->route('keuangan.index')->with('success', 'Setor Updated');
-    //     }
-
-    //     return back()->with('error', 'Not Updated');
-    // }
 
     public function destroy($id)
     {

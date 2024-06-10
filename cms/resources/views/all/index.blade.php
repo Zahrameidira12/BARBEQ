@@ -20,20 +20,15 @@
             <link rel="stylesheet" type="text/css"
                 href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.min.css" />
 
-            <!-- Table -->
+           
             <table id="pesanan" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        {{-- <th scope="col">id pesanan</th> --}}
                         <th scope="col">Nama Produk</th>
                         <th scope="col">Pembeli</th>
-                        {{-- <th scope="col">Alamat</th> --}}
                         <th scope="col">Harga total</th>
-                        {{-- <th scope="col">jumlah produk</th> --}}
                         <th scope="col">Cara Bayar</th>
-                        {{-- <th scope="col">Bukti Transfer</th> --}}
-                        {{-- <th scope="col">Status Verifikasi</th> --}}
                         <th scope="col">Status</th>
                         <th scope="col">Action</th>
 
@@ -44,18 +39,11 @@
                     @foreach ($pesanans as $item)
                         <tr class="">
                             <td scope="row">{{ $loop->iteration }}</td>
-                            {{-- <td>{{ $item->kode }}</td> --}}
                             <td>{{ $item->produk ? $item->produk->nama_produk : 'Produk tidak tersedia' }}</td>
                             <td>{{ $item->pembeli ? $item->pembeli->name : 'Pembeli tidak tersedia' }}</td>
-                            {{-- <td>{{ $item->pembeli ? $item->pembeli->alamat_pembeli : 'Alamat tidak tersedia' }}</td> --}}
                             <td>{{ $item->harga ? $item->harga : 'harga tidak ada' }}</td>
-
-                            {{-- <td>{{ $item->pesanan ? $item->pesanan->jumlah_produk : 'jumlah tidak ada' }}</td> --}}
                             <td>{{ $item->bayar ? $item->bayar->cara_bayar : 'bayar tidak tersedia' }}</td>
-
-                            {{-- <td>{{ $item->statusverifikasi ? $item->statusverifikasi->statusverifikasi : '' }}</td> --}}
                             <td>{{ $item->status ? $item->status->status : '' }}</td>
-
                             <td>
                                 <a href="{{ route('all.show', $item->id) }}" class="btn btn-danger btn-sm" style="width: 30px; height: 30px;"><i class="bi bi-eye-fill"></i></a>
                                 <form action="/all/{{ $item->id }}" method="post" class="d-inline">

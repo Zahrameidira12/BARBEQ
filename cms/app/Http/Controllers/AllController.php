@@ -19,8 +19,7 @@ class AllController extends Controller
     public function index()
     {
         $pesanans = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'rekening', 'bayar','status','user','expedisi'])->get();
-        // $statusverifikasis = Statusverifikasi::all(); // Assuming you have a model named Statusverifikasi
-        // $statuss = Status::all(); // Assuming you have a model named Statusverifikasi
+        
 
         return view('all.index', [
             'title' => 'All Pesanan',

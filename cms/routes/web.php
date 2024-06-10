@@ -56,10 +56,11 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth');
 Route::get('/register', [RegisterController::class, 'index']);
 Route::post('/register', [RegisterController::class, 'store']);
 
-// Route::resource('/produk', ProdukController::class)->except('show')->middleware('auth');
+Route::middleware(['auth'])->group(function () {
+    Route::resource('pembeli', PembeliController::class)->except('show');
+    Route::get('pembeli/{id}', [PembeliController::class, 'show'])->name('pembeli.show');
+});
 
-Route::resource('/pembeli', PembeliController::class)->except('show')->middleware('auth','admin')->except('show');
-Route::get('/pembeli/{id}', [PembeliController::class, 'show'])->name('pembeli.show');
 Route::resource('/pengiriman', PengirimanController::class)->except('show')->middleware('auth');
 Route::get('/pengiriman/{id}', [PengirimanController::class, 'show'])->name('pengiriman.show');
 
@@ -115,8 +116,9 @@ Route::middleware(['auth'])->group(function () {
 // Rute untuk admin
 Route::middleware(['auth'])->group(function () {
     Route::resource('/penjual', PenjualController::class)->except('show');
-    Route::get('/pejual/{id}', [PenjualController::class, 'show'])->name('penjual.show');
+    Route::get('/penjual/{id}', [PenjualController::class, 'show'])->name('penjual.show');
 });
+
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('/produk', ProdukController::class)->except('show');

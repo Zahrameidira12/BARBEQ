@@ -21,7 +21,7 @@ class PesananController extends Controller
         $user = auth()->user();
         $query = Pesanan::query();
 
-        if ($user->isadmin) {
+        if ($user->isadmin || $user->issuperadmin) {
             $query->where('bayar_id', '>', 1)
                   ->where(function ($q) {
                       $q->whereNull('statusverifikasi_id')

@@ -2,9 +2,12 @@
 @section('admin-magang')
     <div class="container mt-4">
         <div class="card" style="max-width: 800px; margin: auto;">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h3>Detail Penjual: {{ $user->name }}</h3>
+                <a href="{{ route('penjual.index') }}" class="btn btn-sm btn-danger"><span
+                        data-feather="arrow-right"></span></a>
             </div>
+
             <div class="card-body">
                 <div class="row mb-3 mt-3">
                     <div class="col-md-12 text-center">
@@ -12,7 +15,7 @@
                         <img src="{{ url('user-images/' . $user->gambar) }}" width="100" height="100" alt="User Image"
                             style="float: left; margin-right: 10px;">
                     </div>
-                 
+
                 </div>
 
 

@@ -23,7 +23,11 @@
                         <label for="new_password_confirmation" class="form-label">Confirm Password</label>
                         <input type="password" id="new_password_confirmation" name="new_password_confirmation" class="form-control" required>
                     </div>
-                    <button id="updateTeacherProfile" class="btn btn-danger" type="submit">Update</button>
+
+                    <div class="mb-3 d-flex justify-content-between align-items-center">
+                        <button id="updateTeacherProfile" type="submit" class="btn btn-primary w-50 mb-3 me-2">Update</button>
+                        <a href="{{ route('setting.index') }}" class="btn btn-sm btn-danger w-50 mb-3">BATAL</a>
+                    </div>
                 </form>
             </div>
         </div>

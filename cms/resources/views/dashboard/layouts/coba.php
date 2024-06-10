@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <style>
+        .nav-link.active {
+            color: red !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -33,21 +38,20 @@
             @endcan
 
 
-            <li class="nav-item">
-                <a class="nav-link text-black {{ Request::is('produk*') ? 'active' : '' }}" href="/produk">
-                    <span data-feather="archive" class="align-text-bottom"></span>
-                    Produk
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-black {{ Request::is('kategori*') ? 'active' : '' }}" href="/categori">
-                    <span data-feather="folder-plus" class="align-text-bottom"></span>
-                    Kategori Produk
-                </a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link text-black {{ Request::is('produk*') ? 'active' : '' }}" href="/produk">
+                        <span data-feather="archive" class="align-text-bottom"></span>
+                        Produk
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-black {{ Request::is('kategori*') ? 'active' : '' }}" href="/categori">
+                        <span data-feather="folder-plus" class="align-text-bottom"></span>
+                        Kategori Produk
+                    </a>
+                </li>
 
-
-            @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
+                @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
                 <li class="nav-item">
                     <a class="nav-link text-dark {{ Request::is('user*') ? 'active' : '' }}" href="/penjual">
                         <span data-feather="user" class="align-text-bottom"></span>
@@ -70,59 +74,62 @@
                 </li>
             @endif
 
-            <li class="nav-item">
-                <a class="nav-link text-dark {{ Request::is('pesanan*') ? 'active' : '' }}" href="/pesanan">
-                    <span data-feather="check-circle" class="align-text-bottom"></span>
-                    @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
-                        Verifikasi Pesanan
-                    @else
-                        Pesanan
-                    @endif
-                </a>
-            </li>
 
-
-            @cannot('admin')
                 <li class="nav-item">
-                    <a class="nav-link text-dark {{ Request::is('pengiriman*') ? 'active' : '' }}" href="/pengiriman">
-                        <span data-feather="send" class="align-text-bottom"></span>
-                        Pengiriman
+                    <a class="nav-link text-dark {{ Request::is('pesanan*') ? 'active' : '' }}" href="/pesanan">
+                        <span data-feather="check-circle" class="align-text-bottom"></span>
+                        @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
+                            Verifikasi Pesanan
+                        @else
+                            Pesanan
+                        @endif
                     </a>
                 </li>
-            @endcannot
 
-            <li class="nav-item">
-                <a class="nav-link text-dark {{ Request::is('keuangan*') ? 'active' : '' }}" href="/keuangan">
-                    <span data-feather="dollar-sign" class="align-text-bottom"></span>
-                    @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
-                        Verifikasi Money
-                    @else
-                        Pemasukan
-                    @endif
-                </a>
-            </li>
 
-            @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
+
+                    <li class="nav-item">
+                        <a class="nav-link text-dark {{ Request::is('pengiriman*') ? 'active' : '' }}" href="/pengiriman">
+                            <span data-feather="send" class="align-text-bottom"></span>
+                            Pengiriman
+                        </a>
+                    </li>
+
+
                 <li class="nav-item">
-                    <a class="nav-link text-dark {{ Request::is('expedisi*') ? 'active' : '' }}" href="/expedisi">
-                        <span data-feather="send" class="align-text-bottom"></span>
-                        Expedisi
+                    <a class="nav-link text-dark {{ Request::is('keuangan*') ? 'active' : '' }}" href="/keuangan">
+                        <span data-feather="dollar-sign" class="align-text-bottom"></span>
+                        @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
+                            Verifikasi Money
+                        @else
+                            Pemasukan
+                        @endif
                     </a>
                 </li>
+
+                @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
+                    <li class="nav-item">
+                        <a class="nav-link text-dark {{ Request::is('expedisi*') ? 'active' : '' }}" href="/expedisi">
+                            <span data-feather="send" class="align-text-bottom"></span>
+                            Expedisi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark {{ Request::is('banner*') ? 'active' : '' }}" href="/banner">
+                            <span data-feather="image" class="align-text-bottom"></span>
+                            Banner
+                        </a>
+                    </li>
+                @endif
+
+
                 <li class="nav-item">
-                    <a class="nav-link text-dark {{ Request::is('banner*') ? 'active' : '' }}" href="/banner">
-                        <span data-feather="image" class="align-text-bottom"></span>
-                        Banner
+                    <a class="nav-link text-dark {{ Request::is('setting*') ? 'active' : '' }}" href="/setting">
+                        <span data-feather="settings" class="align-text-bottom"></span>
+                        Setting
                     </a>
                 </li>
-            @endif
 
-            <li class="nav-item">
-                <a class="nav-link text-dark {{ Request::is('setting*') ? 'active' : '' }}" href="/setting">
-                    <span data-feather="settings" class="align-text-bottom"></span>
-                    Setting
-                </a>
-            </li>
         </ul>
 
         <ul class="sidebar-nav mt-auto">

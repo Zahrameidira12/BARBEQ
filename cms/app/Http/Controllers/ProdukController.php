@@ -20,41 +20,59 @@ class ProdukController extends Controller
 {
 
     public function index()
-{
-    $users = User::all(); // Mendapatkan semua pengguna
+    {
+        $users = User::all(); // Mendapatkan semua pengguna
 
 
-    if (auth()->user()->isadmin) {
-        $produks = Produk::all();
-    } else {
-        $produks = Produk::where('user_id', auth()->id())->get();
+        if (auth()->user()->isadmin || auth()->user()->issuperadmin) {
+            $produks = Produk::all();
+        } else {
+            $produks = Produk::where('user_id', auth()->id())->get();
+        }
+
+        return view('produk.index', [
+            'title' => 'Produk',
+            'produks' => $produks,
+            'users' => $users
+        ]);
     }
 
-    return view('produk.index', [
-        'title' => 'Produk',
-        'produks' => $produks,
-        'users' => $users
-    ]);
-}
 
 
 
 
-public function create()
-{
-    // Ambil kategori yang dimiliki oleh user yang sedang login
-    $kategoris = auth()->user()->kategoris;
+    public function create()
+    {
+        $user = auth()->user();
 
-    return view('produk.create', [
-        'title' => 'Tambah Produk',
-        'kategoris' => $kategoris,
-    ]);
-}
+        $users = User::where('isadmin', false)->where('issuperadmin', false)->get();
+        if ($user->isadmin || $user->issuperadmin) {
+            $users = User::where('isadmin', false)->where('issuperadmin', false)->get();
+        }
 
 
-    function store(Request $request)
-    {//dd($request->all());
+        if ($user->isadmin || $user->issuperadmin) {
 
+            $kategoris = Kategori::all();
+        } else {
+            $kategoris = Kategori::where('user_id', $user->id)
+                ->orWhereHas('user', function ($query) {
+                    $query->where('isadmin', 1)
+                        ->orWhere('issuperadmin', 2);
+                })->get();
+        }
+
+        return view('produk.create', [
+            'title' => 'Tambah Produk',
+            'kategoris' => $kategoris,
+            'users' => $users
+        ]);
+    }
+
+
+    public function store(Request $request)
+    {
+        // Validasi input
         $param = $request->except('_token', 'gambar');
         $validator = Validator::make($param, [
             'kode' => 'required|max:100|min:5',
@@ -64,9 +82,10 @@ public function create()
             'gambar' => 'image|file|max:1024',
             'detail' => 'required',
             'kategori_id' => 'required',
+            'user_id' => 'nullable|exists:users,id'
         ]);
-        if ($validator->fails()) {
 
+        if ($validator->fails()) {
             $errors = $validator->errors()->messages();
             $messages = [];
             foreach ($errors as $key => $value) {
@@ -74,7 +93,8 @@ public function create()
             }
             return back()->with('error', $messages);
         }
-        // dd($param);
+
+        // Proses gambar
         $param['gambar'] = '';
         if ($request->file('gambar')) {
             $file = $request->file('gambar');
@@ -83,7 +103,14 @@ public function create()
             $param['gambar'] = url('produk-images') . '/' . $filename;
         }
 
-        $param['user_id'] = auth()->user()->id;
+        // Menetapkan user_id
+        if (auth()->user()->issuperadmin && $request->filled('user_id')) {
+            $param['user_id'] = $request->input('user_id');
+        } else {
+            $param['user_id'] = auth()->user()->id;
+        }
+
+        // Membuat produk
         $create = Produk::create($param);
 
         if ($create) {
@@ -93,14 +120,33 @@ public function create()
     }
 
 
-    // Di dalam method edit() di ProdukController.php
     public function edit($id)
     {
         $produk = Produk::where('kode', $id)->first();
-        $kategori = Kategori::all(); // Ambil semua data kategori
-        return view('produk.update',['title'=>'Edit Produk '.$produk->nama_produk, 'produk' => $produk, 'kategori' => $kategori]);
-    }
+        $user = auth()->user();
 
+        $users = User::where('isadmin', false)->where('issuperadmin', false)->get();
+        if ($user->isadmin || $user->issuperadmin) {
+            $users = User::where('isadmin', false)->where('issuperadmin', false)->get();
+        }
+
+        if ($user->isadmin || $user->issuperadmin) {
+            $kategoris = Kategori::all();
+        } else {
+            $kategoris = Kategori::where('user_id', $user->id)
+                ->orWhereHas('user', function ($query) {
+                    $query->where('isadmin', 1)
+                        ->orWhere('issuperadmin', 2);
+                })->get();
+        }
+
+        return view('produk.update', [
+            'title' => 'Edit Produk ' . $produk->nama_produk,
+            'produk' => $produk,
+            'kategoris' => $kategoris,
+            'users' => $users // Pass the users to the view
+        ]);
+    }
 
     public function update(Request $request, $id)
     {
@@ -158,48 +204,48 @@ public function create()
 
 
     public function fnGetData(Request $request)
-{
-    // set page parameter for pagination
-    $page = ($request->start / $request->length) + 1;
-    $request->merge(['page' => $page]);
+    {
+        // set page parameter for pagination
+        $page = ($request->start / $request->length) + 1;
+        $request->merge(['page' => $page]);
 
-    $data  = new Produk();
-    $data = $data->where('id', '!=', 1)->with('id');
+        $data  = new Produk();
+        $data = $data->where('id', '!=', 1)->with('id');
 
-    if ($request->input('search')['value'] != null && $request->input('search')['value'] != '') {
-        $keyword = $request->input('search')['value'];
-        $data = $data->where(function($query) use ($keyword) {
-            $query->where('kode', 'LIKE', '%' . $keyword . '%')
-                ->orWhere('nama_produk', 'LIKE', '%' . $keyword . '%')
-                ->orWhere('harga', $keyword);
-        });
+        if ($request->input('search')['value'] != null && $request->input('search')['value'] != '') {
+            $keyword = $request->input('search')['value'];
+            $data = $data->where(function ($query) use ($keyword) {
+                $query->where('kode', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('nama_produk', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('harga', $keyword);
+            });
+        }
+
+        //Setting Limit
+        $limit = 10;
+        if (!empty($request->input('length'))) {
+            $limit = $request->input('length');
+        }
+
+        $data = $data->orderBy($request->columns[$request->order[0]['column']]['nama_produk'], $request->order[0]['dir'])->paginate($limit);
+
+
+        $data = json_encode($data);
+        $data = json_Decode($data);
+
+        return DataTables::of($data->data)
+            ->skipPaging()
+            ->setTotalRecords($data->total)
+            ->setFilteredRecords($data->total)
+            ->addColumn('gambar', function ($data) {
+                return '<img src="' . $data->gambar . '" class="img-circle" style="width:50px">';
+            })
+            ->addColumn('action', function ($data) {
+                $btn = '<a class="btn btn-default" href="admin/' . $data->produk_id . '">Edit</a>';
+                $btn .= ' <button class="btn btn-danger btn-xs btnDelete" style="padding: 5px 6px;" onclick="fnDelete(this,' . $data->user_id . ')">Delete</button>';
+                return $btn;
+            })
+            ->rawColumns(['gambar', 'action'])
+            ->make(true);
     }
-
-    // Setting Limit
-    $limit = 10;
-    if (!empty($request->input('length'))) {
-        $limit = $request->input('length');
-    }
-
-    $data = $data->orderBy($request->columns[$request->order[0]['column']]['nama_produk'], $request->order[0]['dir'])->paginate($limit);
-
-    $data = json_encode($data);
-    $data = json_decode($data);
-
-    return DataTables::of($data->data)
-        ->skipPaging()
-        ->setTotalRecords($data->total)
-        ->setFilteredRecords($data->total)
-        ->addColumn('gambar', function ($data) {
-            return '<img src="' . $data->gambar . '" class="img-circle" style="width:50px">';
-        })
-        ->addColumn('action', function ($data) {
-            $btn = '<a class="btn btn-default" href="admin/' . $data->produk_id . '">Edit</a>';
-            $btn .= ' <button class="btn btn-danger btn-xs btnDelete" style="padding: 5px 6px;" onclick="fnDelete(this,' . $data->user_id . ')">Delete</button>';
-            return $btn;
-        })
-        ->rawColumns(['gambar', 'action'])
-        ->make(true);
-}
-
 }

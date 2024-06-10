@@ -18,26 +18,31 @@ class CategoriController extends Controller
      */
     public function index()
     {
+        $user = auth()->user();
 
-        if (auth()->user()->isadmin) {
+        if ($user->isadmin || $user->issuperadmin) {
             $kategoris = Kategori::all();
+        } else {
+            $kategoris = Kategori::where('user_id', $user->id)
+                                 ->orWhereHas('user', function ($query) {
+                                     $query->where('isadmin', 1)
+                                           ->orWhere('issuperadmin', 2);
+                                 })->get();
         }
 
-        else {
-            $kategoris = Kategori::where('user_id', auth()->id())->get();
-        }
-
-    return view('categori.index', ['title' => 'Kategori produk', 'kategoris' => $kategoris]);
-
+        return view('categori.index', [
+            'title' => 'Kategori produk',
+            'kategoris' => $kategoris
+        ]);
     }
+
 
 
     public function create()
     {
 
         return view('categori.create', ['title' => 'Tambah Kategori produk','kategoris' => Kategori::all(), 'produks' => produk::all()]);
-        // $produk = Produk::all();
-        // return view('produk.create', ['kategoris' => $kategori]);
+
 
 
     }
@@ -69,10 +74,45 @@ class CategoriController extends Controller
     }
 
     public function destroy($id)
+    {
+        $user = auth()->user();
+        $kategori = Kategori::find($id);
+
+        if (!$kategori) {
+            return redirect('categori')->with('error', 'Kategori tidak ditemukan');
+        }
+
+        if ($user->issuperadmin || $user->isadmin || $kategori->user_id == $user->id) {
+            $kategori->delete();
+            return redirect('categori')->with('success', 'Kategori Berhasil dihapus');
+        } else {
+            return redirect('categori')->with('error', 'Anda tidak memiliki izin untuk menghapus kategori ini');
+        }
+    }
+
+public function edit($id)
 {
-    Produk::where('id', $id)->delete();
-    return redirect('categori')->with('success', 'Kategori Berhasil dihapus');
+    $kategori = Kategori::findOrFail($id);
+    return view('categori.update', ['title' => 'Edit kategori ' . $kategori->id, 'kategori' => $kategori]);
 }
+
+public function update(Request $request, $id)
+{
+    $param = $request->except('_method', '_token', 'gambar', 'oldImage');
+    $validator = Validator::make($param, [
+        'kode' => 'required',
+        'kategori' => 'required', // Corrected 'katgeori' to 'kategori'
+    ]);
+
+    if ($validator->fails()) {
+        return back()->withErrors($validator)->withInput();
+    }
+
+    Kategori::where('id', $id)->update($param);
+
+    return redirect('/categori')->with('success', 'Kategori Updated');
+}
+
 
     public function fnGetData(Request $request)
     {

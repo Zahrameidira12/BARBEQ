@@ -19,7 +19,10 @@
                     <label for="nama_pemilik">Nama Pemilik</label>
                     <input type="text" class="form-control" id="nama_pemilik" name="nama_pemilik" value="{{ $rekening->nama_pemilik }}">
                 </div>
-                <button type="submit" class="btn btn-danger">Submit</button>
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    <button type="submit" class="btn btn-primary w-50 mb-3 me-2">SIMPAN</button>
+                    <a href="{{ route('rekening.index') }}" class="btn btn-sm btn-danger w-50 mb-3">BATAL</a>
+                </div>
             </form>
 
         </div>

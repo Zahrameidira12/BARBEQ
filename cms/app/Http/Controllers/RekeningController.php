@@ -1,31 +1,34 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Rekening;
+use Illuminate\Support\Facades\Validator;
 
 class RekeningController extends Controller
 {
     public function index()
     {
-        $rekenings = Rekening::where('user_id', auth()->id())->get();
+        $user = auth()->user();
+
+        if ($user->isadmin || $user->issuperadmin) {
+            $rekenings = Rekening::all();
+        } else {
+            $rekenings = Rekening::where('user_id', $user->id)->get();
+        }
+
         return view('rekening.index', [
-            'title' => 'Daftar Rekening ',
+            'title' => 'Daftar Rekening',
             'rekenings' => $rekenings,
             'users' => User::all(),
         ]);
     }
 
+
     public function create()
     {
-        $user = auth()->user();
-
-        // Cek apakah pengguna adalah admin atau sudah memiliki rekening
-        if (!$user->isadmin && Rekening::where('user_id', $user->id)->exists()) {
-            return redirect()->route('rekening.index')->with('error', 'Anda hanya boleh memiliki satu rekening.');
-        }
-
         return view('rekening.create', ['title' => 'Tambah Rekening']);
     }
 
@@ -33,23 +36,40 @@ class RekeningController extends Controller
     {
         $user = auth()->user();
 
-        // Cek apakah pengguna adalah admin atau sudah memiliki rekening
-        if (!$user->isadmin && Rekening::where('user_id', $user->id)->exists()) {
+        if (!$user->isadmin && !$user->issuperadmin && Rekening::where('user_id', $user->id)->exists()) {
             return redirect()->route('rekening.index')->with('error', 'Anda hanya boleh memiliki satu rekening.');
         }
 
-        $request->validate([
+        $param = $request->except('_token');
+        $param['user_id'] = $user->id;
+
+        $validator = Validator::make($param, [
             'nama_bank' => 'required',
             'no_rek' => 'required',
             'nama_pemilik' => 'required',
+            'user_id' => 'required'
         ]);
 
-        $request->merge(['user_id' => $user->id]); // tambahkan user_id sebelum menyimpan
+        if ($validator->fails()) {
+            $errors = $validator->errors()->messages();
+            $messages = [];
+            foreach ($errors as $key => $value) {
+                $messages[] = $value[0];
+            }
+            return back()->with('error', implode(', ', $messages));
+        }
 
-        Rekening::create($request->all());
+        $create = Rekening::create($param);
 
-        return redirect()->route('rekening.index')->with('success', 'Rekening berhasil ditambahkan.');
+        if ($create) {
+            return redirect('rekening')->with('success', 'Rekening Created');
+        }
+        return back()->with('error', 'Oops, something went wrong!');
     }
+
+
+
+
 
     public function edit($id)
     {
@@ -57,23 +77,34 @@ class RekeningController extends Controller
         return view('rekening.update', ['title' => 'Edit Rekening', 'rekening' => $rekening]);
     }
 
-    public function update(Request $request, Rekening $rekening)
+    public function update(Request $request, $id)
     {
-        $request->validate([
+        $param = $request->except('_method', '_token', 'gambar', 'oldImage');
+        $param['user_id'] = auth()->id();
+        $validator = Validator::make($param, [
             'nama_bank' => 'required',
             'no_rek' => 'required',
             'nama_pemilik' => 'required',
+            'user_id' => 'required'
         ]);
 
-        $rekening->update($request->all());
+        if ($validator->fails()) {
+            $errors = $validator->errors()->messages();
+            $messages = [];
+            foreach ($errors as $key => $value) {
+                $messages[] = $value[0];
+            }
+            return back()->with('error', implode(', ', $messages));
+        }
 
-        return redirect()->route('rekening.index')->with('success', 'Rekening berhasil diperbarui.');
+        Rekening::where('id', $id)->update($param);
+
+        return redirect('rekening')->with('success', 'Rekening Updated');
     }
 
-    public function destroy(Rekening $rekening)
+    public function destroy($id)
     {
-        $rekening->delete();
-
-        return redirect()->route('rekening.index')->with('success', 'Rekening berhasil dihapus.');
+        Rekening::where('id', $id)->delete();
+        return redirect('rekening')->with('success', 'Rekening Berhasil dihapus');
     }
 }

@@ -48,14 +48,11 @@
                     @foreach ($pesanans as $item)
                         <tr class="">
                             <td scope="row">{{ $loop->iteration }}</td>
-                            {{-- <td>{{ $item->kode }}</td> --}}
-                            @cannot('admin')
+                            @unless(auth()->user()->isadmin || auth()->user()->issuperadmin)
                             <td>{{ $item->produk ? $item->produk->nama_produk : 'Produk tidak tersedia' }}</td>
-                            @endcannot
+                            @endunless
                             <td>{{ $item->pembeli ? $item->pembeli->name : 'Pembeli tidak tersedia' }}</td>
-                            {{-- <td>{{ $item->pembeli ? $item->pembeli->alamat_pembeli : 'Alamat tidak tersedia' }}</td> --}}
                             <td>{{ $item->harga ?? 'harga tidak ada' }}</td>
-                            {{-- <td>{{ $item->pesanan ? $item->pesanan->jumlah_produk : 'jumlah tidak ada' }}</td> --}}
                             <td>{{ $item->bayar ? $item->bayar->cara_bayar : 'bayar tidak tersedia' }}</td>
 
                             <td>
@@ -68,10 +65,7 @@
                                 @endif
                             </td>
 
-
-
-
-                            @can('admin')
+                            @if (auth()->user()->isadmin || auth()->user()->issuperadmin)
                                 <td>
                                     <form action="{{ route('pesanan.updateStatusverifikasi', $item->id) }}" method="POST">
                                         @csrf
@@ -88,7 +82,7 @@
                                         <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                                     </form>
                                 </td>
-                            @endcan
+                            @endif
                             <td>
                                 <a href="{{ route('pesanan.show', $item->id) }}" class="btn btn-danger btn-sm" style="width: 30px; height: 30px;"><i class="bi bi-eye-fill"></i></a>
                                 <form action="/pesanan/{{ $item->id }}" method="post" class="d-inline">

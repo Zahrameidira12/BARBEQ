@@ -14,22 +14,39 @@ use Yajra\DataTables\DataTables;
 
 class PengirimanController extends Controller
 {
+
     public function index(Request $request)
     {
-          $user = auth()->user();
+        $user = auth()->user();
 
-    $pengirimans = Pesanan::where('user_id', $user->id)
-        ->where(function ($query) {
-            $query->where('bayar_id', 1)
-                ->whereIn('statusverifikasi_id', [0, 1])
-                ->orWhereNull('statusverifikasi_id');
-        })
-        ->orWhere(function ($query) use ($user) { // Gunakan $user pada klausa orWhere
-            $query->where('user_id', $user->id) // Pertimbangkan user_id
-                ->where('bayar_id', 2)
-                ->where('statusverifikasi_id', 2);
-        })
-        ->get();
+        if ($user->issuperadmin) {
+
+            $pengirimans = Pesanan::with('user')
+                ->where(function ($query) {
+                    $query->where('bayar_id', 1)
+                        ->whereIn('statusverifikasi_id', [0, 1])
+                        ->orWhereNull('statusverifikasi_id');
+                })
+                ->orWhere(function ($query) {
+                    $query->where('bayar_id', 2)
+                        ->where('statusverifikasi_id', 2);
+                })
+                ->get();
+        } else {
+
+            $pengirimans = Pesanan::where('user_id', $user->id)
+                ->where(function ($query) {
+                    $query->where('bayar_id', 1)
+                        ->whereIn('statusverifikasi_id', [0, 1])
+                        ->orWhereNull('statusverifikasi_id');
+                })
+                ->orWhere(function ($query) use ($user) {
+                    $query->where('user_id', $user->id)
+                        ->where('bayar_id', 2)
+                        ->where('statusverifikasi_id', 2);
+                })
+                ->get();
+        }
 
         return view('pengiriman.index', [
             'title' => 'Pengiriman',
@@ -43,8 +60,7 @@ class PengirimanController extends Controller
         ]);
     }
 
-
-    public function show($id)
+   public function show($id)
     {
         $pesanan = Pesanan::with(['produk', 'pembeli', 'statusverifikasi', 'user', 'bayar', 'status', 'expedisi'])->findOrFail($id);
         return view('pengiriman.show', ['title' => 'Detail Pengiriman', 'pesanan' => $pesanan]);
